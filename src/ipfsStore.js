@@ -1,55 +1,26 @@
 import ipfs from './ipfs'
-// const CID = require('cids')
 
-// function for sending any file into IPFS and returns the hash.
-export const ipfsSender = (file) => {
+//PROMISE for converting the FILE into BUFFER and send it to IPFS and GET the HASH
+export const readers = (file) => {
 
+  if(file != null){
     return new Promise((resolve, reject) => {
-
-      let buffer = Buffer.from(JSON.stringify(file))
-      ipfs.add(buffer, (err, ipfsHash) => {
-        if(ipfsHash){
-          resolve(ipfsHash[0].hash)
-
-          //this.setState({ ipfsHash:ipfsHash[0].hash })
-        }else{
-          reject("something is not good :(" + err);
-        }   
-      })
-
+        const reader = new FileReader()  
+        reader.readAsArrayBuffer(file)
+        reader.onload = () => {
+            console.log(Buffer(reader.result))
+            // let buffer = Buffer.from("Hello Everyone this is IPFS")
+            ipfs.add(Buffer(reader.result), (err, ipfsHash) => {
+                if(ipfsHash){
+                    resolve(ipfsHash[0].hash)
+                  }else{
+                    reject("something is not good :(" + err);
+                  }
+            })   
+        }  
     })
-
+  }else{
+      console.error("Please select the Image first")
   }
 
-//function for fetching the data from the IPFS through the hash.
-export const ipfsFetcher = (hash) => {
-    
-    // const cid = new CID(hash)
-    return new Promise((resolve, reject) => {
-      // ipfs.block.get(cid, function (err, block) {
-      //   if (err) {
-      //     throw err
-      //     reject(err)
-      //   }   
-      //     let obj = block.data.toString().substring(8,block.data.length - 3)
-      //     obj = JSON.parse(obj) 
-      //     console.log("kaam kr raha hai")      
-      //     console.log(obj)
-      //     resolve(obj)
-      // })
-      fetch(`https://ipfs.io/ipfs/${hash}`)
-      .then(res => res.json())
-      .then(
-          (result) => {
-            if(result){
-              resolve(result)
-              //this.setState({ipfsData:result})
-            } 
-          },
-          (error) => {
-            reject(error)
-          }
-      )
-    })
-
-  }
+}

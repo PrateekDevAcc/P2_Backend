@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import ipfs from './ipfs';
+import { readers } from '../ipfsStore'
 
-class gunTest extends Component {
+class Portfolio extends Component {
 
     state = { 
         gun : this.props.gun,
@@ -11,18 +11,22 @@ class gunTest extends Component {
         link : ""
      }
 
+     //********************* Functional Coding Area Starts ****************************
+
+     //---------------------------- CREATE OPERATION -----------------------
+
      //method for inserting the project data into the DB
     insertData = () => {
 
         let found = true
 
-        if(this.state.name == ""){
+        if(this.state.name === ""){
             //check for the empty name
             console.log("Please enter name")
 
         }else{
             //check for the already stored Name
-            this.state.gun.get('Portfolio').get(this.state.name).get("Data").once((data, key)=>{
+            this.state.gun.get('Projects').get(this.state.name).get("Data").once((data, key)=>{
                
                 if(typeof data === "undefined")
                     found = false
@@ -41,8 +45,8 @@ class gunTest extends Component {
                     }
     
                     //insert the Object containig the detailed of the project excluding the images.
-                    this.state.gun.get('Portfolio').get(this.state.name).get("Data").put( obj )
-                    console.log("Record Inserted")
+                    this.state.gun.get('Projects').get(this.state.name).get("Data").put( obj )
+                    console.log("Record Inserted", obj) 
                 }
 
             })
@@ -51,17 +55,37 @@ class gunTest extends Component {
         
     }
 
- 
+    //-------------------------- Images CREATE OPERATION ----------------------
+
+    //upload method, Call PROMISE with iterating the IMAGES and create IMAGE HASHES Array
+    insertImg = evt => {
+
+        for(let i=0;i<evt.target.files.length;i++){
+            readers(evt.target.files[i])
+            .then(res => {
+                console.log(res)  
+                this.state.gun.get('Projects').get(this.state.name).get("Images").get(`Image${i}`).put( res )
+
+            }) 
+            
+        }
+        
+    }
+
+
+    //---------------------------- READ OPERATION -----------------------
+
     //Iterating the Structure of the Project Root Node 
     iterateRecords = () => {
 
-        //itreating in the sub-directory of Master directory (Portfolio->this.state.name) to fetch the Data
-        if(this.state.name == ""){
-            this.state.gun.get('Portfolio').map((data, key)=>{
+        //itreating in the sub-directory of Master directory (Projects->this.state.name) to fetch the Data
+        if(this.state.name === ""){
+            // console.log("chal raha hai")
+            this.state.gun.get('Projects').map((data, key)=>{
                 console.log(data, key)
             })
         }else{
-            this.state.gun.get('Portfolio').get(this.state.name).map((data, key)=>{
+            this.state.gun.get('Projects').get(this.state.name).map((data, key)=>{
                 console.log(data, key)
             })
         }
@@ -71,17 +95,17 @@ class gunTest extends Component {
     //displaying single conplete record
     viewData = () => {
 
-        if(this.state.name == ""){
+        if(this.state.name === ""){
             console.log("No Record Found")
         }else{
 
             //fetching the Data Node
-            this.state.gun.get('Portfolio').get(this.state.name).get("Data").once((data, key)=>{
+            this.state.gun.get('Projects').get(this.state.name).get("Data").once((data, key)=>{
                 console.log(key, data)
             });
 
             //fetching the Images Node
-            this.state.gun.get('Portfolio').get(this.state.name).get("Images").once((data, key)=>{
+            this.state.gun.get('Projects').get(this.state.name).get("Images").once((data, key)=>{
                 console.log(key, data)
             });
         }
@@ -89,31 +113,16 @@ class gunTest extends Component {
 
     //-------------------------- Images Functionality ----------------------
 
-    //upload method, Call PROMISE with iterating the IMAGES and create IMAGE HASHES Array
-    insertImg = evt => {
-
-        for(let i=0;i<evt.target.files.length;i++){
-            this.readers(evt.target.files[i])
-            .then(res => {
-                console.log(res)  
-                this.state.gun.get('Portfolio').get(this.state.name).get("Images").get(`Image${i}`).put( res )
-
-            }) 
-            
-        }
-        
-    }
-
    //method for updating the images of the project.
     updateImg = () => {
 
-        if(this.state.imgNode == ""){
+        if(this.state.imgNode === ""){
             console.log("please enter the Image directory")
         }else{
-            this.readers(this.state.newImg)
+            readers(this.state.newImg)
             .then(res => {
                 console.log(res)
-                this.state.gun.get('Portfolio').get(this.state.name).get("Images").get(this.state.imgNode).put( res )
+                this.state.gun.get('Projects').get(this.state.name).get("Images").get(this.state.imgNode).put( res )
             })
         }     
 
@@ -121,37 +130,20 @@ class gunTest extends Component {
 
     //method for deleteing the Image from the Project
     deleteImg = () => {
-        this.state.gun.get('Portfolio').get(this.state.name).get("Images").get(this.state.imgNode).put(null)
+        this.state.gun.get('Projects').get(this.state.name).get("Images").get(this.state.imgNode).put(null)
         console.log(`${this.state.imgNode} is deleted`)
     }
+    
+    //Function for Clear or remove the particular Project Data
+    clearData = () => {
 
-    //PROMISE for converting the FILE into BUFFER and send it to IPFS and GET the HASH
-    readers = (file) => {
-        if(file != null){
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader()  
-                reader.readAsArrayBuffer(file)
-                reader.onload = () => {
-                    console.log(Buffer(reader.result))
-                    // let buffer = Buffer.from("Hello Everyone this is IPFS")
-                    ipfs.add(Buffer(reader.result), (err, ipfsHash) => {
-                        if(ipfsHash){
-                            resolve(ipfsHash[0].hash)
-                          }else{
-                            reject("something is not good :(" + err);
-                          }
-                    })   
-                }  
-            })
-        }else{
-            console.error("Please select the Image first")
-        }   
+        this.state.gun.get("Projects").get(this.state.name).put(null);
+        console.log(this.state.name, "Deleted")
     }
 
-    //event Handlers
+    //******************** Functional Coding Area is Ended **********************************
 
-    
-    clearData = () => window.localStorage.clear()
+    //******************** Event Handlers Started *******************************************
 
     updateName = evt => this.setState({ name : evt.target.value.toLowerCase() })
 
@@ -163,12 +155,14 @@ class gunTest extends Component {
 
     getNewImg = evt => this.setState({ newImg : evt.target.files[0] })
 
+    //******************** Event Handlers Ended *********************************************
 
+    //******************** Graphic Rendering Started ****************************************
 
     render() { 
         return ( 
             <div>
-                 <h1>This is Gun Test</h1>
+                 <h1>This is Projects</h1>
                  <input type="text" onChange={evt => this.updateName(evt)} placeholder="Name"/>
                  <input type="text" onChange={evt => this.updateDesc(evt)} placeholder="Description" />
                  <input type="text" onChange={evt => this.updateLink(evt)} placeholder="Project URL"/>
@@ -180,7 +174,7 @@ class gunTest extends Component {
                 <button onClick={this.insertData}>Insert Data</button>
                 <button onClick={this.viewData}>View Single Record</button>
                 <button onClick={this.iterateRecords}>View Structure</button>
-                {/* <button onClick={this.clearData}>Clear</button> */}
+                <button onClick={this.clearData}>Clear</button>
 
                 <br/><hr/><br/>
 
@@ -191,9 +185,16 @@ class gunTest extends Component {
 
                 <button onClick={this.updateImg}>Update Image</button>
                 <button onClick={this.deleteImg}>Delete Image</button>
+
+                <br />
+
+                <button onClick={this.props.logOut  }>Logout</button>
             </div>
          );
     }
+
+
+    //******************** Event Handlers Started *******************************************
 }
  
-export default gunTest;
+export default Portfolio;
