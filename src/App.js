@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Gun from "gun"
 import PORTFOLIO from './CRUD/Portfolio'
 import ABOUT from './CRUD/About'
+import ACH from './CRUD/Achievement'
 import './App.css';
 // import Login from './login';
 // import AllProject from './AllProject';
@@ -39,7 +40,8 @@ class App extends Component {
         <br />
         <hr />
         <br />
-        <ABOUT gun={this.gun} logOut={this.logOut} />
+        <ACH gun={this.gun} logOut={this.logOut} />
+        {/* <ABOUT gun={this.gun} logOut={this.logOut} /> */}
         {/* <AllProject gun={this.gun} /> */}
         {/* {
           !this.state.isLogin ?

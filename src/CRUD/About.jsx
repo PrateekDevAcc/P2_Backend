@@ -101,8 +101,8 @@ class ABOUT extends Component {
 
     //---------------------------- READ OPERATION -----------------------
 
-    //Get the Structure of the Project Root Node 
-    showPersonalStructure = () => {
+    //Get the Structure of the Informations Root Node 
+    showInformationsStructure = () => {
 
         ////itreating in the sub-directory of Master directory (Projects->this.state.name) to fetch the Data
         this.state.gun.get('Informations').map((data, key)=>{
@@ -121,26 +121,6 @@ class ABOUT extends Component {
         
         
     }
-
-    //displaying single conplete record
-    viewData = () => {
-
-        if(this.state.name === ""){
-            console.log("No Record Found")
-        }else{
-
-            //fetching the Data Node
-            this.state.gun.get('Projects').get(this.state.name).get("Data").once((data, key)=>{
-                console.log(key, data)
-            });
-
-            //fetching the Images Node
-            this.state.gun.get('Projects').get(this.state.name).get("Images").once((data, key)=>{
-                console.log(key, data)
-            });
-        }
-    }
-    
     
     //******************** Functional Coding Area is Ended **********************************
 
@@ -181,7 +161,7 @@ class ABOUT extends Component {
                 <br/>
                 <button onClick={this.insertPersonalData}>Insert Data</button>
                 <button onClick={this.insertPersonalData}>Update Data</button>
-                <button onClick={this.showPersonalStructure}>Show Strut</button>
+                <button onClick={this.showInformationsStructure}>Show Strut</button>
                 <br/>
                 <br/>
                 <div>Contact Details</div>
