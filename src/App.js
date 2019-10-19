@@ -35,7 +35,7 @@ class App extends Component {
 
     return ( 
       <div className="App">
-        <PORTFOLIO gun={this.gun} logOut={this.logOut} />
+        {/* <PORTFOLIO gun={this.gun} logOut={this.logOut} /> */}
         <br />
         <hr />
         <br />
