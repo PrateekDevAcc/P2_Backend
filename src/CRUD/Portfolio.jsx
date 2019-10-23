@@ -128,6 +128,8 @@ class Portfolio extends Component {
 
     }
 
+    //-------------------------- DELETE Functionality ----------------------
+
     //method for deleteing the Image from the Project
     deleteImg = () => {
         this.state.gun.get('Projects').get(this.state.name).get("Images").get(this.state.imgNode).put(null)
