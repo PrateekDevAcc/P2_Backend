@@ -83,6 +83,23 @@ class Achievements extends Component {
         
         
     }
+
+    //---------------------------- DELETE OPERATION -------------------------
+
+    //delete the Skills from the DB
+    deleteSkill  = () => {
+
+            this.state.gun.get('Conquest').get('Skills Details').get(`skill_${this.state.skillName}`).put(null)
+            console.log(`${this.state.skillName} is deleted`)
+        
+    }
+
+    //delete the Certificate details from the DB
+    deleteCert = () => {
+
+            this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${this.state.shortCName}`).put( null )
+            console.log(`${this.state.shortCName} is deleted`)   
+    }
     
     //******************** Functional Coding Area is Ended **********************************
 
@@ -112,6 +129,7 @@ class Achievements extends Component {
                 <input type="text" onChange={evt => this.updateSkillValue(evt)} placeholder="1/3/5" />                
                 <br/>
                 <button onClick={this.insertSkillsData}>Insert/Update Data</button>
+                <button onClick={this.deleteSkill}>Delete Skill</button>
                 <button onClick={this.showConquestStructure}>Show Strut</button>
                 <br/>
                 <br/>
@@ -121,6 +139,7 @@ class Achievements extends Component {
                 <input type="text" onChange={evt => this.updateCertDesc(evt)} placeholder="Certification Description" />
                 <input type="file" onChange={evt => this.getCertImage(evt)} />
                 <button onClick={this.insertCertificatesData}>Insert/Update Other Data</button>
+                <button onClick={this.deleteCert}>Delete Certificate</button>
                 <button onClick={this.showCertificatesStructure }>Show Strut</button>
             </div>
          );
