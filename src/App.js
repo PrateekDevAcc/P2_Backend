@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import Gun from "gun"
-import PORTFOLIO from './CRUD/Portfolio'
-import ABOUT from './CRUD/About'
-import ACH from './CRUD/Achievement'
 import './App.css';
-// import Login from './login';
-// import AllProject from './AllProject';
+import Login from './Components/login';
+import Home from './Components/Home'
 require("gun/sea");
 
 class App extends Component {
@@ -36,18 +33,11 @@ class App extends Component {
 
     return ( 
       <div className="App">
-        {/* <PORTFOLIO gun={this.gun} logOut={this.logOut} /> */}
-        <br />
-        <hr />
-        <br />
-        <ACH gun={this.gun} logOut={this.logOut} />
-        {/* <ABOUT gun={this.gun} logOut={this.logOut} /> */}
-        {/* <AllProject gun={this.gun} /> */}
-        {/* {
+        {
           !this.state.isLogin ?
             <Login gun={this.gun} updateSignIn={this.updateSignIn}/>
-          : <CRUD gun={this.gun} logOut={this.logOut} />
-        } */}
+          : <Home gun={this.gun} logOut={this.logOut} />
+        }
       </div>
      );
   }

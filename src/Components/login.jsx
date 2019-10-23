@@ -7,7 +7,7 @@ class Login extends Component {
         user : this.props.gun.user()
      }
 
-     //function for Login the suer inside the application
+     //function for Login the user inside the application
      login = () => {
          let { username, password, user } = this.state
 

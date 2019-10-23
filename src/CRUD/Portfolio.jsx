@@ -162,7 +162,7 @@ class Portfolio extends Component {
     render() { 
         return ( 
             <div>
-                 <h1>This is Projects</h1>
+                 <h2>This is Projects</h2>
                  <input type="text" onChange={evt => this.updateName(evt)} placeholder="Name"/>
                  <input type="text" onChange={evt => this.updateDesc(evt)} placeholder="Description" />
                  <input type="text" onChange={evt => this.updateLink(evt)} placeholder="Project URL"/>

@@ -105,7 +105,7 @@ class Achievements extends Component {
     render() { 
         return ( 
             <div>
-                <h1>This is Achievements</h1>
+                <h2>This is Achievements</h2>
                 <div>Skills Details</div>
                 <br/>
                 <input type="text" onChange={evt => this.updateSkillName(evt)} placeholder="Skill Name" />
@@ -121,7 +121,7 @@ class Achievements extends Component {
                 <input type="text" onChange={evt => this.updateCertDesc(evt)} placeholder="Certification Description" />
                 <input type="file" onChange={evt => this.getCertImage(evt)} />
                 <button onClick={this.insertCertificatesData}>Insert/Update Other Data</button>
-                <button onClick={this.showCertificatesStructure }>Show Strut</button>
+                <button onClick={this.showCertificatesStructure}>Show Strut</button>
             </div>
          );
     }

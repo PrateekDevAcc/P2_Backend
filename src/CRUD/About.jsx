@@ -151,7 +151,7 @@ class ABOUT extends Component {
     render() { 
         return ( 
             <div>
-                <h1>This is About</h1>
+                <h2>This is About</h2>
                 <div>Personal Details</div>
                 <br/>
                 <input type="text" onChange={evt => this.updateName(evt)} placeholder="Full Name" value={this.state.name} />
