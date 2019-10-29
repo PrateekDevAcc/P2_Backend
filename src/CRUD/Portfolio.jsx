@@ -8,7 +8,8 @@ class Portfolio extends Component {
         name : "",
         imgNode : "",
         desc : "",
-        link : ""
+        link : "",
+        images : null
      }
 
      //********************* Functional Coding Area Starts ****************************
@@ -37,16 +38,22 @@ class Portfolio extends Component {
             
                 }else{
     
-                        //lets insert the Detials
-                        let obj = {
-                        name : this.state.name,
-                        desc : this.state.desc,
-                        link : this.state.link
+                    //lets insert the Detials
+                    let obj = {
+                        name       : this.state.name,
+                        desc       : this.state.desc,
+                        link       : this.state.link,
+                        no_of_imgs : this.state.images.length
                     }
     
-                    //insert the Object containig the detailed of the project excluding the images.
-                    this.state.gun.get('Projects').get(this.state.name).get("Data").put( obj )
-                    console.log("Record Inserted", obj) 
+                    if(this.insertImg(this.state.images)){
+
+                        //insert the Object containig the detailed of the project excluding the images.
+                        this.state.gun.get('Projects').get(this.state.name).get("Data").put( obj )
+                        console.log("Record Inserted", obj) 
+
+                    }
+                    
                 }
 
             })
@@ -58,18 +65,27 @@ class Portfolio extends Component {
     //-------------------------- Images CREATE OPERATION ----------------------
 
     //upload method, Call PROMISE with iterating the IMAGES and create IMAGE HASHES Array
-    insertImg = evt => {
+    insertImg = images => {
 
-        for(let i=0;i<evt.target.files.length;i++){
-            readers(evt.target.files[i])
-            .then(res => {
-                console.log(res)  
-                this.state.gun.get('Projects').get(this.state.name).get("Images").get(`Image${i}`).put( res )
+        if(images){
 
-            }) 
-            
+            for(let i=0 ; i<images.length ; i++ ){
+                readers(images[i])
+                .then(res => {
+                    console.log(res)  
+                    this.state.gun.get('Projects').get(this.state.name).get("Images").get(`Image${i}`).put( res )
+
+                })
+            }
+
+            return true
+
+        }else{  
+
+            console.log("Please select any image.")
+            return false
         }
-        
+            
     }
 
 
@@ -128,6 +144,29 @@ class Portfolio extends Component {
 
     }
 
+    addImages = () => {
+
+        if(this.state.images && this.state.name !== ""){
+           
+            this.state.gun.get('Projects').get(this.state.name).get("Images").once((data, key)=>{       
+                let arr = Object.entries(data).slice(1)
+                console.log("chal raha hai", arr.length, this.state.images.length)
+                for(let i= arr.length, j=0; i<this.state.images.length + arr.length ; i++, j++ ){
+                    
+                    readers(this.state.images[j])
+                    .then(res => {
+                        console.log(res)  
+                        this.state.gun.get('Projects').get(this.state.name).get("Images").get(`Image${i}`).put( res )
+    
+                    })
+                }
+    
+            });
+
+            
+        }else console.log("Please select any Image to add.")
+    }
+
     //-------------------------- DELETE Functionality ----------------------
 
     //method for deleteing the Image from the Project
@@ -155,7 +194,9 @@ class Portfolio extends Component {
 
     getImgNode = evt => this.setState({ imgNode : evt.target.value.toLowerCase() })
 
-    getNewImg = evt => this.setState({ newImg : evt.target.files[0] })
+    getNewImg  = evt => this.setState({ newImg : evt.target.files[0] })
+
+    getNewImgs = evt => this.setState({ images : evt.target.files })
 
     //******************** Event Handlers Ended *********************************************
 
@@ -164,11 +205,11 @@ class Portfolio extends Component {
     render() { 
         return ( 
             <div>
-                 <h2>This is Projects</h2>
-                 <input type="text" onChange={evt => this.updateName(evt)} placeholder="Name"/>
-                 <input type="text" onChange={evt => this.updateDesc(evt)} placeholder="Description" />
-                 <input type="text" onChange={evt => this.updateLink(evt)} placeholder="Project URL"/>
-                <input type="file" onChange={evt => this.insertImg(evt)} multiple/>
+                <h2>This is Projects</h2>
+                <input type="text" onChange={evt => this.updateName(evt)} placeholder="Name"/>
+                <input type="text" onChange={evt => this.updateDesc(evt)} placeholder="Description" />
+                <input type="text" onChange={evt => this.updateLink(evt)} placeholder="Project URL"/>
+                <input type="file" onChange={evt => this.getNewImgs(evt)} multiple/>
                 <img src={this.state.fetchImg} alt=""/>
 
                 <br />
@@ -176,6 +217,7 @@ class Portfolio extends Component {
                 <button onClick={this.insertData}>Insert Data</button>
                 <button onClick={this.viewData}>View Single Record</button>
                 <button onClick={this.iterateRecords}>View Structure</button>
+                <button onClick={this.addImages}>Add Image</button>
                 <button onClick={this.clearData}>Delete Project</button>
 
                 <br/><hr/><br/>
