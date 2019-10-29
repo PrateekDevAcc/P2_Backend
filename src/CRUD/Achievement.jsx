@@ -138,6 +138,7 @@ class Achievements extends Component {
                 <input type="text" onChange={evt => this.updateSCName(evt)} placeholder="Short Cert Name" />
                 <input type="text" onChange={evt => this.updateCertDesc(evt)} placeholder="Certification Description" />
                 <input type="file" onChange={evt => this.getCertImage(evt)} />
+                <br/>
                 <button onClick={this.insertCertificatesData}>Insert/Update Other Data</button>
                 <button onClick={this.deleteCert}>Delete Certificate</button>
                 <button onClick={this.showCertificatesStructure }>Show Strut</button>

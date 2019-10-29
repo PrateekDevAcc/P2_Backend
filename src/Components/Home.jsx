@@ -9,6 +9,7 @@ class Home extends Component {
         return ( 
             <div>
                 <h1>Home Page</h1>
+                <button onClick={this.props.logOut  }>Logout</button>
                 <PORTFOLIO gun={this.props.gun} logOut={this.props.logOut} />
                 <hr />
                 <ACH gun={this.props.gun} logOut={this.props.logOut} />

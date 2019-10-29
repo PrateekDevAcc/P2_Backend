@@ -121,6 +121,16 @@ class ABOUT extends Component {
         
         
     }
+
+    //---------------------------- DELETE OPERATION -------------------------
+
+    //delete the Social links from the DB
+    deleteSocial  = () => {
+
+        this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${this.state.socialName}`).put(null)
+        console.log(`${this.state.socialName} is deleted`)
+    
+    }
     
     //******************** Functional Coding Area is Ended **********************************
 
@@ -178,6 +188,7 @@ class ABOUT extends Component {
                 <input type="text" onChange={evt => this.updateSocailName(evt)} placeholder="Socail Platform Name"/>
                 <input type="text" onChange={evt => this.updateSocailLink(evt)} placeholder="URL"/>
                 <button onClick={() => this.insertContactData("social")}>Add Link</button>
+                <button onClick={this.deleteSocial}>Delete</button>
                 <br/>
                 <button onClick={this.showContactStructure}>Show Strut</button>
                 <br/>

@@ -176,10 +176,10 @@ class Portfolio extends Component {
                 <button onClick={this.insertData}>Insert Data</button>
                 <button onClick={this.viewData}>View Single Record</button>
                 <button onClick={this.iterateRecords}>View Structure</button>
-                <button onClick={this.clearData}>Clear</button>
+                <button onClick={this.clearData}>Delete Project</button>
 
                 <br/><hr/><br/>
-
+                <p>Image Updation</p>
                 <input type="text" onChange={evt => this.getImgNode(evt)} placeholder="Image Name" />
                 <input type="file" onChange={evt => this.getNewImg(evt)} />
 
@@ -187,10 +187,6 @@ class Portfolio extends Component {
 
                 <button onClick={this.updateImg}>Update Image</button>
                 <button onClick={this.deleteImg}>Delete Image</button>
-
-                <br />
-
-                <button onClick={this.props.logOut  }>Logout</button>
             </div>
          );
     }
