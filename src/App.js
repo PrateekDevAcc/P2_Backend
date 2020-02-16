@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import Gun from "gun"
 import './App.css';
-import Login from './Components/login';
-import Home from './Components/Home'
+import Login from './Components/LoginPage';
+import Landing from './Components/LandingPage'
 require("gun/sea");
 
 class App extends Component {
   
   state = {
-    isLogin : false
+    isLogin : true
   }
 
-  constructor(props){
+  constructor(){
     super();
       this.gun=Gun("http://localhost:3000/gun");
       window.gun = this.gun; //To have access to gun object in browser console
@@ -36,7 +36,7 @@ class App extends Component {
         {
           !this.state.isLogin ?
             <Login gun={this.gun} updateSignIn={this.updateSignIn}/>
-          : <Home gun={this.gun} logOut={this.logOut} />
+          : <Landing gun={this.gun} logOut={this.logOut} />
         }
       </div>
      );

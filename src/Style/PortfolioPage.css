@@ -1,0 +1,168 @@
+.test{
+    border: 0.1px solid red;
+}
+
+.portfolio_container{
+    width: 50%;
+    height: 70vh;
+    overflow-y: scroll;
+    padding: 10px 0px 10px 0px;
+}
+
+.portfolio_card{
+    width: 90%;
+    height: 100px;
+    background-color: #fefefe;
+    box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.185);
+    margin: 15px 0px 15px 0px;
+    border-radius: 2px;
+    z-index: 20;
+}
+
+.flex_container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flexy{
+    margin: 5px 0 5px 0;
+}
+
+.card_logo{
+    flex:1;
+    height: inherit;
+    width: 100%;
+    background-image : url('../asserts/projectLogo.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 35% 55%;
+}
+
+.portfolio_card_title{
+    flex:3;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.card_action_div{
+    flex:2;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+} 
+
+
+#edit_card_btn{
+    margin: 20px;
+    background-color: #6EB5FC;
+}
+
+#delete_card_btn{
+    margin: 20px;
+    background-color: #FC6E6E;
+}
+
+#project_title{
+    font-family: 'Roboto';
+    color: #4e4e4e;
+    font-size: 1.4em;
+    width: 100%;
+    display:flex;
+    margin: 0px 0px -25px 0px;
+}
+
+#project_desc{
+    font-family: 'Roboto';
+    font-size: 0.8em;
+    color: #8e8e8e;
+    display: flex;
+    margin: -25px 0px 0px 0px;
+    width: 100%;
+}
+
+
+.project_inner_container{
+    height: 70vh;
+    width: 580px;
+    padding: 0 10px 0 10px;
+}
+
+#project_name_row{
+    margin-top: 3vh;
+}
+
+.projectFormRow{
+    width: 90%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 7vh;
+    margin-left: 15px;
+}
+
+#projectFormRow_description{
+    height: 6vh !important;
+    align-content: flex-start;
+}
+
+
+.contact_form_label{
+  margin-top: -10px;
+}
+
+.projectFormField{
+    font-size: 1em;
+    color: #3e3e3e;
+    font-weight: 445;
+    flex-basis: 100%;
+    height: 20px !important;
+    width: 250px !important;
+}
+
+.project_image_label_container{
+    justify-content: flex-start;
+    margin-top: 30px;
+}
+
+.project_images_container{
+    width: 100%;
+    height: calc(70vh  - 35vh);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.project_image{
+    width: 150px;
+    height: 150px;
+    box-shadow: 0px 2px 10px rgba(0,0,0,0.5);
+}
+
+#add_new_btn{
+    background-color: #FC6E6E;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+#projectDescription{
+    height: 50px !important;
+}
+
+#add_project_image_btn{
+    display: none;
+}
+
+#responsive-dialog-Project-Page{
+    font-family: "Pristina" !important;
+}
+
+#project_page_footer_icons{
+   margin-bottom: 10px;
+}

@@ -1,0 +1,82 @@
+.side_pattern{
+    height: 400px;
+    width: 100%;
+}
+
+.center_section{
+    height: 400px;
+    width: 100%;
+}
+
+.background_container{
+    height: 100vh;
+    width: 100%;
+}
+
+#left_login_pattern{
+    background: url('../asserts/Intersection2.svg');
+    background-repeat: no-repeat;
+    background-size: 95% 50%;
+    background-position: 0% 100%;
+}
+
+#right_login_pattern{
+    background: url('../asserts/Intersection3.svg');
+    background-repeat: no-repeat;
+    background-size: 95% 50%;
+    background-position:100% 0%;
+}
+
+#my_logo{
+    background: url('../asserts/myLogo-01.svg');
+    background-repeat: no-repeat;
+    background-size: 90% 90%;
+    background-position: 50% 100%;
+    height: 150px;
+    width: 100%;
+}
+
+
+#login_form{
+    height: 250px;
+    width: 100%;
+}
+
+.MuiInputLabel-root{
+    border-radius: 25px !important;
+}
+
+.MuiInputLabel-outlined{
+    transform: translate(15px, 10px) scale(1) !important;
+}
+
+.MuiInputLabel-outlined.MuiInputLabel-shrink{
+    transform: translate(14px, -6px) scale(0.75) !important;
+}
+
+.MuiInputBase-input{
+    height: 0px !important;
+    border : #8462F9 !important;
+}
+
+.outlined-size-small{
+    min-height: 0px !important;
+    width: 22vw;
+}
+
+.MuiButton-containedPrimary{
+    width: 10vw;
+    border-radius: 30px !important;
+}
+
+.spacer{
+    margin: 10px !important;
+}
+
+.PrivateNotchedOutline-root-164{
+    border-radius: 30px !important;
+}
+
+.MuiOutlinedInput-notchedOutline{
+    border: 2px solid #8462F9 !important;
+}

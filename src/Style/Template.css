@@ -1,0 +1,75 @@
+.test{
+     border : 0.1px solid red;
+}
+.room_header{
+    height: 11vh;
+    width: 100%;
+}
+
+#header_back_btn{
+    background : #8462F9;
+    position: absolute;
+    top: 2%;
+    left: 2%;
+}
+
+.addBtnDiv{
+    width: 9%;
+    height: 8vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+#add_new_btn{
+    background : #8462F9;
+    /* position: absolute;
+    top: 2%;
+    left: 2%; */
+}
+
+.header_sticky{
+    height: inherit;
+    width: 100%;
+}
+
+#page_title{
+    
+    font-family: "Pristina";
+    font-size: 3.5em;
+    margin-top: 10px;
+    color: #3e3e3e;
+}
+
+.page_container{
+    height: calc(100vh - 11vh);
+    width: 100%;
+}
+
+.page_container_div{
+    height: 80vh;
+    width: 85%;
+    background: #FFFEFE;
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.container_title{
+    height: 8vh;
+    width: 85%;
+    margin-top: 10px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    font-family: "Pristina";
+    font-size: 2.2em;
+    color: #3e3e3e;
+}
+
+.custom_dashed{
+    background-image: linear-gradient(to right, transparent 50%, #3e3e3e 50%);
+    background-size: 70px 20px;
+    background-position: 04% 0%;
+    height: 1px;
+    width: 95%;
+}
