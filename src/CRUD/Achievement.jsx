@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { readers } from '../ipfsStore';
+import Collection from './Collection';
+
+const skillRecord = new Collection();
+const certRecord = new Collection();
 
 class Achievements extends Component {
 
@@ -26,9 +30,17 @@ class Achievements extends Component {
 
         }else{
 
-            //insert the Object containig the detailed of the project excluding the images.
-            this.state.gun.get('Conquest').get('Skills Details').get(`skill_${this.state.skillName}`).put( this.state.skillValue )
-            console.log("Record is inserted")
+            let checkUniqueness = this.state.gun.get('Conquest').get('Skills Details').get(`skill_${this.state.skillName}`);
+            
+            if(checkUniqueness['_'].put == undefined){
+
+                //insert the Object containig the detailed of the project excluding the images.
+                this.state.gun.get('Conquest').get('Skills Details').get(`skill_${this.state.skillName}`).put( this.state.skillValue )
+                console.log("Record is inserted")
+
+            }else{
+                console.log("This Skill is already been Inserted.");
+            }
 
         }           
     }
@@ -42,20 +54,28 @@ class Achievements extends Component {
     
             }else{
 
-                readers(this.state.certImg)
-                .then(res => {
-                    console.log(res) 
+                let checkUniqueness = this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${this.state.shortCName}`);
+            
+                if(checkUniqueness['_'].put == undefined){
 
-                    let obj = {
-                        shortName : this.state.shortCName,
-                        Description : this.state.certDesc,
-                        Image : res
-                    }
-    
-                    //insert the Object containig the detailed of the Certificates including with images.
-                    this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${this.state.shortCName}`).put( obj )
-                    console.log("Record is inserted")   
-                })
+                    readers(this.state.certImg)
+                    .then(res => {
+                        console.log(res) 
+
+                        let obj = {
+                            shortName : this.state.shortCName,
+                            Description : this.state.certDesc,
+                            Image : res
+                        }
+        
+                        //insert the Object containig the detailed of the Certificates including with images.
+                        this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${this.state.shortCName}`).put( obj )
+                        console.log("Record is inserted")   
+                    })
+                
+                }else{
+                    console.log("This Certification is already been Inserted.");
+                }
                 
             }                    
     }
@@ -63,25 +83,28 @@ class Achievements extends Component {
 
     //---------------------------- READ OPERATION -----------------------
 
-    //Get the Structure of the Conquest Root Node 
-    showConquestStructure = () => {
+    getSkillsRecord = () => {
 
-        ////itreating in the sub-directory of Master directory (Projects->this.state.name) to fetch the Data
-        this.state.gun.get('Conquest').map((data, key)=>{
-            console.log(data, key)
+        this.state.gun.get('Conquest').get('Skills Details').map((data, key)=>{
+            if(data != null){
+                skillRecord.add(key, data)
+                console.log(key, data)
+            }
         })
-        
-        
+        console.log(skillRecord.collection)
+        return skillRecord.collection;
     }
 
-    showCertificatesStructure = () => {
+    getCertRecord = () => {
 
-        ////itreating in the sub-directory of Master directory (Projects->this.state.name) to fetch the Data
         this.state.gun.get('Conquest').get("Certificate Details").map((data, key)=>{
-            console.log(data, key)
+            if(data != null){
+                certRecord.add(key, data)
+                console.log(key, data)
+            }   
         })
-        
-        
+        console.log(certRecord.collection)
+        return certRecord.collection;
     }
 
     //---------------------------- DELETE OPERATION -------------------------
@@ -89,16 +112,27 @@ class Achievements extends Component {
     //delete the Skills from the DB
     deleteSkill  = () => {
 
+        let checkUniqueness = this.state.gun.get('Conquest').get('Skills Details').get(`skill_${this.state.skillName}`);
+            
+        if(checkUniqueness['_'].put != undefined){
             this.state.gun.get('Conquest').get('Skills Details').get(`skill_${this.state.skillName}`).put(null)
             console.log(`${this.state.skillName} is deleted`)
-        
+        }else{
+            console.log("This Skill is not available.");
+        }
     }
 
     //delete the Certificate details from the DB
     deleteCert = () => {
 
+        let checkUniqueness = this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${this.state.shortCName}`);
+            
+        if(checkUniqueness['_'].put != undefined){
             this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${this.state.shortCName}`).put( null )
             console.log(`${this.state.shortCName} is deleted`)   
+        }else{
+            console.log("This Certifiaction is not available.");
+        }
     }
     
     //******************** Functional Coding Area is Ended **********************************
@@ -130,7 +164,7 @@ class Achievements extends Component {
                 <br/>
                 <button onClick={this.insertSkillsData}>Insert/Update Data</button>
                 <button onClick={this.deleteSkill}>Delete Skill</button>
-                <button onClick={this.showConquestStructure}>Show Strut</button>
+                <button onClick={this.getSkillsRecord}>Show Strut</button>
                 <br/>
                 <br/>
                 <div>Certificates Details</div>
@@ -141,12 +175,12 @@ class Achievements extends Component {
                 <br/>
                 <button onClick={this.insertCertificatesData}>Insert/Update Other Data</button>
                 <button onClick={this.deleteCert}>Delete Certificate</button>
-                <button onClick={this.showCertificatesStructure }>Show Strut</button>
+                <button onClick={this.getCertRecord}>Show Strut</button>
             </div>
          );
     }
 
-     //******************** Event Handlers Started *******************************************
+     //******************** Graphic Rendering Ends *******************************************
 
 }
  

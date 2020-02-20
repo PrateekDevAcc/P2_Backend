@@ -7,7 +7,7 @@ import Template from './ContentTemplate';
 class Landing extends Component {
 
     state = {
-        chosen : 3,
+        chosen : 0,
         pageName : "Acheievement"
     }
 
