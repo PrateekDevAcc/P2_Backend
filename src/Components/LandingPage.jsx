@@ -8,7 +8,7 @@ class Landing extends Component {
 
     state = {
         chosen : 0,
-        pageName : "Acheievement"
+        pageName : ""
     }
 
     backdrop = {

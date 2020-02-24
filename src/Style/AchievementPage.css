@@ -114,3 +114,12 @@
     width: 250px !important;
     margin-top: -5px;
 }
+
+#add_cert_image_btn{
+    display: none;
+}
+
+.thumbnail_image{
+    height: 100%;
+    width: 100%;
+}

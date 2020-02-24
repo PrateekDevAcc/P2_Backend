@@ -204,3 +204,7 @@
     width: 10px !important;
     margin-top: 5px;
 }
+
+#aboutImagePreview{
+    border-radius: 50%;
+}

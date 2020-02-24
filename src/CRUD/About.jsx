@@ -1,10 +1,22 @@
 import React, { Component } from 'react';
 import { readers } from '../ipfsStore'
+import Collection from '../Collection';
+import Util from '../Util';
+
+const personalRecord = new Collection();
+const contactRecord = new Collection();
+const socialRecord = new Collection();
 
 class ABOUT extends Component {
+
+    constructor(props){
+        super(props)
+        this.Util = new Util();
+    }
+
     state = { 
         gun : this.props.gun,
-        name : "",
+        name : "Prateek Patel",
         dp : null,
         designation : "",
         about : "",
@@ -20,68 +32,59 @@ class ABOUT extends Component {
     //---------------------------- CREATE & UPDATE OPERATION -----------------------
 
      //method for inserting/updating the Personal Details data into the DB
-     insertPersonalData = () => {
+     insertPersonalData = personalData => {
 
-        if(this.state.name === "" || this.state.designation === "" || this.state.about === ""){
+        if(this.state.name === "" || personalData.designation === "" || personalData.about === ""){
             //check for the empty name, designation, about field
             console.log("Please enter All the Values")
 
         }else{
-
                 
             //lets insert the Detials
             let obj = {
                 name        : this.state.name,
-                designation : this.state.designation,
-                about       : this.state.about
+                designation : personalData.designation,
+                about       : personalData.about
             }
 
-            
             //insert the Object containig the detailed of the project excluding the images.
             this.state.gun.get('Informations').get("Personal Details").put( obj )
 
-            if(this.state.dp) this.uploadDP()
+            if(personalData.DP) this.uploadDP(personalData.DP)
             
             console.log("Record Inserted", obj) 
-        
-          
+               
             }           
     }
 
      //method for inserting/updating the Contact Details data into the DB
-    insertContactData = option => {
+    insertContactData = (option, data) => {
 
-        if(option === "other"){
+        if(option === "contact"){
             //code for inserting Other Contact details
-            if(this.state.email === "" || this.state.mobile === "" || this.state.otherLink === ""){
+            if(data.email === "" || data.mobile === "" || data.otherLink === ""){
                 //check for the empty name, designation, about field
                 console.log("Please enter All the Values")
     
             }else{
 
-                let obj = {
-                    email : this.state.email,
-                    mobile : this.state.mobile,
-                    otherLink : this.state.otherLink
-                }
-
                 //insert the Object containig the detailed of the project excluding the images.
-                this.state.gun.get('Informations').get("Contact Details").get("Other Details").put( obj )
-                console.log("Record is inserted")
+                this.state.gun.get('Informations').get("Contact Details").get("Other Details").put( data )
+                console.log("Record is inserted", data)
 
             }
         }
           
         if(option === "social"){
             //code for inserting social contact details
-            if(this.state.socialLink === "" || this.state.socialName === ""){
+            if(data.socialLink === "" || data.socialName === ""){
                 //check for the empty socail platform name, social link field
                 console.log("Please enter All the Values")
     
             }else{
 
                 //insert the Object containig the detailed of the project excluding the images.
-                this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${this.state.socialName}`).put( this.state.socialLink )
+                this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${data.socialName}`).put( data.socialLink )
                 console.log("Record is inserted")
 
             }
@@ -89,9 +92,9 @@ class ABOUT extends Component {
                 
     }
 
-    uploadDP = () => {
+    uploadDP = dp => {
         //insert the image into the object, Call PROMISE with iterating the IMAGES and create IMAGE HASHES Array
-        readers(this.state.dp)
+        readers(dp)
         .then(res => {
             console.log(res)  
             this.state.gun.get('Informations').get("Personal Details").get("DP").put( res ) 
@@ -101,26 +104,35 @@ class ABOUT extends Component {
 
     //---------------------------- READ OPERATION -----------------------
 
-    //Get the Structure of the Informations Root Node 
-    showInformationsStructure = () => {
-
-        ////itreating in the sub-directory of Master directory (Projects->this.state.name) to fetch the Data
-        this.state.gun.get('Informations').map((data, key)=>{
-            console.log(data, key)
+    getPersonalRecord = () => {
+        this.state.gun.get('Informations').get("Personal Details").map((data, key)=>{
+            if(data != null){
+                personalRecord.add(key, data)
+            }
         })
-        
-        
+        return personalRecord.collection;
     }
 
-    showContactStructure = () => {
-
-        ////itreating in the sub-directory of Master directory (Projects->this.state.name) to fetch the Data
-        this.state.gun.get('Informations').get("Contact Details").map((data, key)=>{
-            console.log(data, key)
+    getContactRecord = () => {
+        this.state.gun.get('Informations').get("Contact Details").get("Other Details").map((data, key)=>{
+            if(data != null){
+                contactRecord.add(key, data)
+            }
         })
-        
-        
+        return contactRecord.collection;
     }
+
+    getSocialRecord = () => {
+        this.state.gun.get('Informations').get("Contact Details").get("Social Details").map((data, key)=>{
+            if(data != null){
+                let newKey = this.Util.splitNode(key)
+                socialRecord.add(newKey, data)
+            }
+        })
+        console.log(socialRecord.collection)
+        return socialRecord.collection;
+    }
+
 
     //---------------------------- DELETE OPERATION -------------------------
 
@@ -171,7 +183,7 @@ class ABOUT extends Component {
                 <br/>
                 <button onClick={this.insertPersonalData}>Insert Data</button>
                 <button onClick={this.insertPersonalData}>Update Data</button>
-                <button onClick={this.showInformationsStructure}>Show Strut</button>
+                <button onClick={this.getPersonalRecord}>Show Strut</button>
                 <br/>
                 <br/>
                 <div>Contact Details</div>
@@ -190,7 +202,7 @@ class ABOUT extends Component {
                 <button onClick={() => this.insertContactData("social")}>Add Link</button>
                 <button onClick={this.deleteSocial}>Delete</button>
                 <br/>
-                <button onClick={this.showContactStructure}>Show Strut</button>
+                <button onClick={this.getSocialRecord}>Show Strut</button>
                 <br/>
 
             </div>
