@@ -33,6 +33,11 @@ class Collection  {
         return this.collection[key];
     }
 
+    clearData = () => {
+        delete this.collection;
+        return true;
+    }
+
 }
  
 export default Collection;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import About from "../CRUD/About";
-import { Grid, Button, Fab, Input, InputLabel, TextField, FormControl, Select, MenuItem, FormHelperText, IconButton } from '@material-ui/core';
+import { Grid, Button, Input, TextField, Select, MenuItem, IconButton } from '@material-ui/core';
 import '../Style/AboutPage.css'
 import FilterTiltShift from '@material-ui/icons/FilterTiltShift'
 import Create from '@material-ui/icons/Create'
@@ -19,7 +19,7 @@ class AboutPage extends Component {
     }
 
     state = { 
-        activeStep : 0,//make it 0 after dev
+        activeStep : 0,//make it 0 after dev test
         isNotEditable : true,
         selectedProfile : '',
         selectedProfileUrl : '',
@@ -31,12 +31,12 @@ class AboutPage extends Component {
 
     UNSAFE_componentWillMount(){
         this.setState({ 
-            personalRecord : this.personalRecord,
-            contactRecord : this.contactRecord,
-            socialRecord : this.socialRecord,
+            personalRecord : this.aboutObj.getPersonalRecord(),
+            contactRecord : this.aboutObj.getContactRecord(),
+            socialRecord : this.aboutObj.getSocialRecord(),
             imagePerview : `https://ipfs.infura.io/ipfs/${this.personalRecord.DP}`
         }) 
-        console.log(this.contactRecord)
+        console.log('ComponentWillMount is running')
     }
 
     handleBack = () => this.setState({ activeStep : this.state.activeStep - 1 }) 
@@ -93,8 +93,11 @@ class AboutPage extends Component {
     
     saveChanges = () => {
         alert("Do You sure for Saving !")
-        this.aboutObj.insertPersonalData(this.state.personalRecord)
-        this.aboutObj.insertContactData('contact', this.state.contactRecord)     
+        if(typeof this.state.personalRecord.DP != 'string') 
+            this.aboutObj.insertPersonalData(this.state.personalRecord)
+            
+        this.aboutObj.insertContactData('contact', this.state.contactRecord)
+        this.setState({ activeStep : 0 })     
     }
 
     addSocialProfile = () => {

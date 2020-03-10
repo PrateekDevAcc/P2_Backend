@@ -11,6 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
 import Project from './Project';
+import Portfolio from '../CRUD/Portfolio';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -18,37 +19,59 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 class PortfolioPage extends Component {    
 
+    UNSAFE_componentWillMount(){
+        this.portfolioObj = new Portfolio(this.props);
+        this.portfolioRecord = this.portfolioObj.getPortfolioRecord(); 
+        this.setState({ 
+            portfolioRecord : this.portfolioRecord
+        }) 
+        console.log(this.portfolioRecord)
+    }
+
     state = { 
-        portfolioCards : [
-            { id : 1, name : "Test Project 1", desc : "This is test description", accessLink : "https://testproject.com"},
-            { id : 2, name : "Test Project 2", desc : "This is test description", accessLink : "https://testproject.com"},
-            { id : 3, name : "Test Project 3", desc : "This is test description", accessLink : "https://testproject.com"},
-            { id : 4, name : "Test Project 4", desc : "This is test description", accessLink : "https://testproject.com"},
-            { id : 5, name : "Test Project 5", desc : "This is test description", accessLink : "https://testproject.com"},
-        ],
         open : false,
         openProjectModal : false,
         currentCard : { id : "", name : "", desc : "", accessLink : ""},
         isNotEditable_project : true,
-        componentMount : false
-     }
+        componentMount : false,
+        portfolioRecord : '',
+        currentImages : null,
+        currentProjectName : ''
+    }
+
+    
 
      handleClose = () => this.setState({ open : false })
-     handleClickOpen = () => this.setState({ open : true })
+     handleClickOpen = projectName => this.setState({ open : true, currentProjectName : projectName })
 
      handleProjectPageClose = () => this.setState({ openProjectModal : false })
-     handleProjectPageClickOpen = card => this.setState({ openProjectModal : true, currentCard : card })
+     handleProjectPageClickOpen = card =>{ this.setState({ openProjectModal : true, currentCard : card, currentImages : null }) ; console.log(card)}
 
      handleEditProject = () => this.setState({ isNotEditable_project : !this.state.isNotEditable_project })
 
-     saveProject = () => {
-        alert("Project is saved")
+     //updateCurrentImages = currentImages => this.setState({ currentImages : currentImages })
+
+     handleDeleteProjectImages = (projectName, imageNode) => this.portfolioObj.deleteImg(projectName, imageNode)   
+
+     saveProject = (operation, newProjectData, newProjectImages) => {
+        console.log(newProjectData)
+        console.log(newProjectImages)
+        if(operation == 'save'){
+            this.portfolioObj.insertProject(newProjectData, newProjectImages)
+        }else if(operation == 'update'){
+            this.portfolioObj.updateProject(newProjectData)
+            if(newProjectImages) this.portfolioObj.addImages(newProjectImages, newProjectData.name)
+        }
         this.handleProjectPageClose()
      }
 
-     addImages = evt => {
-        alert("Your Image is added." + evt.target.files[0])
-     }
+     handleDeleteProject = () => {
+        this.portfolioObj.deleteProject(this.state.currentProjectName)
+        this.handleClose()
+        this.setState({ 
+            portfolioRecord : this.portfolioObj.getPortfolioRecord()
+        })
+     }   
 
      projectDialogBox = () => { 
          return ( 
@@ -59,35 +82,47 @@ class PortfolioPage extends Component {
                     openProjectModal={this.state.openProjectModal}
                     handleEditProject={this.handleEditProject}
                     isNotEditable_project={this.state.isNotEditable_project}
-                    addImages={this.addImages}
+                    currentImages={this.state.currentImages}
+                    updateCurrentImages={this.updateCurrentImages}
+                    handleDeleteProjectImages={this.handleDeleteProjectImages}
                 /> 
          )
      }
 
      triggerProjectForm = () => {
-        this.setState({ openProjectModal : true, currentCard : { id : "", name : "", desc : "", accessLink : ""} })
+         let defaultCard = {
+            Data : {
+                 name : '',
+                 desc : '',
+                 link : '',
+                 no_of_imgs : ''
+             },
+             Images : {}
+         }
+        this.setState({ openProjectModal : true, currentCard : defaultCard, currentImages : null })
         this.projectDialogBox()
      }
      
      render() { 
+         let project = this.state.portfolioRecord
         return ( 
             <>
                 <Grid container direction="row" justify="center" alignItems="center" className="portfolio_container">
                   {
-                      this.state.portfolioCards.map(card => {
+                      Object.keys(this.state.portfolioRecord).map(card => {
                         return(
-                            <div key={card.id} className="flex_container portfolio_card" >
+                            <div key={project[card].Data.name} className="flex_container portfolio_card" >
                                 <div item="true" sm={2} className="flexy card_logo"></div>
                                 <div item="true" sm={9} className="flexy portfolio_card_title">
-                                    <div id="project_title">{card.name}</div>
-                                    <div id="project_desc">{card.desc}</div>
+                                    <div id="project_title">{project[card].Data.name}</div>
+                                    <div id="project_desc">{project[card].Data.desc}</div>
                                 </div>
                                 <div item="true" sm={1} className="flexy card_action_div">
                                     <Fab 
                                         color="primary" 
                                         aria-label="add" 
                                         id="edit_card_btn" 
-                                        onClick={() => this.handleProjectPageClickOpen(card)}
+                                        onClick={() => this.handleProjectPageClickOpen(project[card])}
                                         size="small"
                                         className="header_sticky"
                                     >
@@ -97,7 +132,7 @@ class PortfolioPage extends Component {
                                         color="primary" 
                                         aria-label="add" 
                                         id="delete_card_btn" 
-                                        onClick={this.handleClickOpen}
+                                        onClick={() => this.handleClickOpen(project[card].Data.name)}
                                         size="small"
                                         className="header_sticky"
                                     >
@@ -126,7 +161,7 @@ class PortfolioPage extends Component {
                     <Button onClick={this.handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={this.handleClose} color="secondary">
+                    <Button onClick={this.handleDeleteProject} color="secondary">
                         Remove
                     </Button>
                     </DialogActions>

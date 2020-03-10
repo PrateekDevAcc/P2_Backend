@@ -1,7 +1,18 @@
 import React, { Component } from 'react';
 import { readers } from '../ipfsStore'
+import Collection from '../Collection';
+import Util from '../Util';
+
+const projectRecord = new Collection();
+const projectData = new Collection();
+const projectImages = new Collection();
 
 class Portfolio extends Component {
+
+    constructor(props){
+        super(props)
+        this.Util = new Util();
+    }
 
     state = { 
         gun : this.props.gun,
@@ -17,55 +28,52 @@ class Portfolio extends Component {
      //---------------------------- CREATE OPERATION -----------------------
 
      //method for inserting the project data into the DB
-    insertData = () => {
+    insertProject = (projectData, imagesData) => {
 
-        let found = true
-
-        if(this.state.name === ""){
-            //check for the empty name
-            console.log("Please enter name")
-
-        }else{
-            //check for the already stored Name
-            this.state.gun.get('Projects').get(this.state.name).get("Data").once((data, key)=>{
-               
-                if(typeof data === "undefined")
-                    found = false
-               
-                if(found === true){
+        if(projectData.name != "" && imagesData != null){
             
-                    console.log("Project name is already stored.")
-            
-                }else{
-    
-                    //lets insert the Detials
-                    let obj = {
-                        name       : this.state.name,
-                        desc       : this.state.desc,
-                        link       : this.state.link,
-                        no_of_imgs : this.state.images.length
-                    }
-    
-                    if(this.insertImg(this.state.images)){
+            //check for the already stored Name 
+            let projectRecord = this.getPortfolioRecord()
+            let found = projectRecord.hasOwnProperty(projectData.name)
+          
+            if(found === true){
+        
+                console.log("Project name is already stored.")
+        
+            }else{
 
-                        //insert the Object containig the detailed of the project excluding the images.
-                        this.state.gun.get('Projects').get(this.state.name).get("Data").put( obj )
-                        console.log("Record Inserted", obj) 
+                //lets insert the Detials
+                let obj = {
+                    name       : projectData.name,
+                    desc       : projectData.desc,
+                    link       : projectData.link,
+                    no_of_imgs : imagesData.length
+                }    
 
-                    }
-                    
+                if(this.insertImg(imagesData, projectData.name)){
+
+                    //insert the Object containig the detailed of the project excluding the images.
+                    this.state.gun.get('Projects').get(projectData.name).get("Data").put( obj )
+                    console.log("Record Inserted", obj) 
+
                 }
+                
+            }
+            
+        }else{
 
-            })
+            //check for the empty name
+            console.log("Please Enter Name & Select Any Image")
                 
         }
         
     }
+    
 
     //-------------------------- Images CREATE OPERATION ----------------------
 
     //upload method, Call PROMISE with iterating the IMAGES and create IMAGE HASHES Array
-    insertImg = images => {
+    insertImg = (images, projectName) => {
 
         if(images){
 
@@ -73,7 +81,7 @@ class Portfolio extends Component {
                 readers(images[i])
                 .then(res => {
                     console.log(res)  
-                    this.state.gun.get('Projects').get(this.state.name).get("Images").get(`Image${i}`).put( res )
+                    this.state.gun.get('Projects').get(projectName).get("Images").get(`Image${i}`).put( res )
 
                 })
             }
@@ -87,6 +95,17 @@ class Portfolio extends Component {
         }
             
     }
+
+    //---------------------------- UPDATE OPERATION -----------------------
+
+     //method for updating the project data into the DB
+     updateProject = projectData => {
+
+        if(projectData.name != ''){
+            this.state.gun.get('Projects').get(projectData.name).get("Data").put( projectData )
+            console.log("Record Updated", projectData) 
+        }
+     }
 
 
     //---------------------------- READ OPERATION -----------------------
@@ -127,6 +146,36 @@ class Portfolio extends Component {
         }
     }
 
+    getPortfolioRecord = () => {
+        
+
+        this.state.gun.get('Projects').map((data,project) => {
+
+            if(data != null){
+                projectData.collection = {}
+                this.state.gun.get('Projects').get(project).map((data1, key1) => {
+                    if(key1 == 'Images'){
+                        projectImages.collection = {}
+                        Object.keys(data1).map(image =>{
+                            if(image != '_')
+                            if(data1[image] != null){
+                                projectImages.add(image, data1[image])
+                            }
+                        })
+                        projectData.add(key1, projectImages.collection)
+                    }else{
+                        projectData.add(key1, data1)
+                    }
+                    
+                })
+                projectRecord.add(project,projectData.collection)
+            }   
+
+        })
+        console.log(projectRecord.collection)
+        return projectRecord.collection;
+    }
+
     //-------------------------- Images Functionality ----------------------
 
    //method for updating the images of the project.
@@ -144,19 +193,19 @@ class Portfolio extends Component {
 
     }
 
-    addImages = () => {
+    addImages = (projectImages, projectName) => {
 
-        if(this.state.images && this.state.name !== ""){
+        if(projectImages && projectName != ''){
            
-            this.state.gun.get('Projects').get(this.state.name).get("Images").once((data, key)=>{       
+            this.state.gun.get('Projects').get(projectName).get("Images").once((data, key)=>{       
                 let arr = Object.entries(data).slice(1)
-                console.log("chal raha hai", arr.length, this.state.images.length)
-                for(let i= arr.length, j=0; i<this.state.images.length + arr.length ; i++, j++ ){
+                // console.log("chal raha hai", arr.length, projectImages.length)
+                for(let i= arr.length, j=0; i<projectImages.length + arr.length ; i++, j++ ){
                     
-                    readers(this.state.images[j])
+                    readers(projectImages[j])
                     .then(res => {
                         console.log(res)  
-                        this.state.gun.get('Projects').get(this.state.name).get("Images").get(`Image${i}`).put( res )
+                        this.state.gun.get('Projects').get(projectName).get("Images").get(`Image${i}`).put( res )
     
                     })
                 }
@@ -170,17 +219,17 @@ class Portfolio extends Component {
     //-------------------------- DELETE Functionality ----------------------
 
     //method for deleteing the Image from the Project
-    deleteImg = () => {
-        this.state.gun.get('Projects').get(this.state.name).get("Images").get(this.state.imgNode).put(null)
-        console.log(`${this.state.imgNode} is deleted`)
+    deleteImg = (projectName, imageNode) => {
+        this.state.gun.get('Projects').get(projectName).get("Images").get(imageNode).put(null)
+        console.log(`${imageNode} is deleted from ${projectName}`)
     }
-    
-    //Function for Clear or remove the particular Project Data
-    clearData = () => {
 
-        this.state.gun.get("Projects").get(this.state.name).put(null);
-        console.log(this.state.name, "Deleted")
+    //method for deleteing the Project
+    deleteProject = projectName => {
+        this.state.gun.get('Projects').get(projectName).put(null)
+        console.log(`${projectName} project is deleted.`)
     }
+
 
     //******************** Functional Coding Area is Ended **********************************
 
@@ -214,11 +263,12 @@ class Portfolio extends Component {
 
                 <br />
 
-                <button onClick={this.insertData}>Insert Data</button>
+                <button onClick={this.insertProject}>Insert Data</button>
                 <button onClick={this.viewData}>View Single Record</button>
                 <button onClick={this.iterateRecords}>View Structure</button>
                 <button onClick={this.addImages}>Add Image</button>
                 <button onClick={this.clearData}>Delete Project</button>
+                <button onClick={this.getPortfolioRecord}>Get Collection</button>
 
                 <br/><hr/><br/>
                 <p>Image Updation</p>

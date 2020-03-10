@@ -1,9 +1,10 @@
-import React from 'react';
-import { Grid, Button, TextField, IconButton } from '@material-ui/core';
+import React, {useState} from 'react';
+import { Button, TextField, IconButton } from '@material-ui/core';
 import '../Style/PortfolioPage.css';
 import Create from '@material-ui/icons/Create'
 import LockOpen from '@material-ui/icons/LockOpen'
 import AddAPhoto from '@material-ui/icons/AddAPhoto'
+import Cancel from '@material-ui/icons/Cancel'
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -14,6 +15,51 @@ export default function Project(props) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const [project, setProject] = useState(props.card.Data)
+  const [currentImg, setCurrentImg] = useState()
+  const [projectImages, setProjectImages] = useState(props.card.Images)
+
+  const handleProjectUpdate = evt => {
+     
+    let tempProject = {
+        name : project.name,
+        link : project.link, 
+        desc : project.desc
+    }
+
+    if(evt.target.name == 'name'){
+        tempProject.name = evt.target.value
+    }else if(evt.target.name == 'link'){
+        tempProject.link = evt.target.value
+    }else if(evt.target.name == 'desc'){
+        tempProject.desc = evt.target.value
+    }
+      
+    setProject(tempProject)
+  }
+
+  const addImages = evt => {
+    setCurrentImg(evt.target.files)
+  }
+
+  const handleDeleteImage = (imageType, projectName, imageNode) => {
+
+    if(imageType == 'old'){
+        let newCurrentImages = { ...projectImages }
+        delete newCurrentImages[imageNode]
+        setProjectImages(newCurrentImages)
+        props.handleDeleteProjectImages(projectName, imageNode)
+        // console.log('delete ho gaya hai', projectImages, imageNode)
+        
+    }else if(imageType == 'new'){
+        let newCurrentImages = { ...currentImg }
+        delete newCurrentImages[imageNode]
+        setCurrentImg(newCurrentImages)
+        props.updateCurrentImages(currentImg)
+        // console.log('delete ho gaya hai', currentImg, imageNode)
+    }
+    
+ }
 
   return (
     <div>
@@ -24,12 +70,12 @@ export default function Project(props) {
             aria-labelledby="responsive-dialog-Project-Page"
             id="project_dialog"
         >
-            <DialogTitle id="responsive-dialog-Project-Page">{props.card.name ? props.card.name : "New Project"}</DialogTitle>
+            <DialogTitle id="responsive-dialog-Project-Page">{props.card.Data.name ? props.card.Data.name : "New Project"}</DialogTitle>
             <div className="custom_dashed"></div>
             <div className="project_inner_container">
                 <div className="projectFormRow" id="project_name_row">
                     <div  htmlFor="" className="contact_form_label">Project Name</div>
-                    <TextField  className="contact_form_textfield projectFormField" id="projectName" type="text" defaultValue={props.card.name ? props.card.name : " "} disabled={props.isNotEditable_project}/>
+                    <TextField  name="name" className="contact_form_textfield projectFormField" id="projectName" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.name ? project.name : " "} disabled={props.isNotEditable_project}/>
                     { 
                         props.isNotEditable_project ?
                         <Create className="editIcon" onClick={() => props.handleEditProject()}/>
@@ -38,7 +84,7 @@ export default function Project(props) {
                 </div>
                 <div className="projectFormRow">
                     <div  htmlFor="" className="contact_form_label">Access Link</div>
-                    <TextField  className="contact_form_textfield projectFormField" id="projectAccessLink" type="text" defaultValue={props.card.accessLink ? props.card.accessLink : " "} disabled={props.isNotEditable_project}/>
+                    <TextField  name="link" className="contact_form_textfield projectFormField" id="projectAccessLink" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.link ? project.link : " "} disabled={props.isNotEditable_project}/>
                     { 
                         props.isNotEditable_project ?
                         <Create className="editIcon" onClick={() => props.handleEditProject()}/>
@@ -47,7 +93,7 @@ export default function Project(props) {
                 </div>
                 <div className="projectFormRow" id="projectFormRow_description">
                     <div  htmlFor="contactLink" className="contact_form_label" id="projectFormRow_description_label">Description</div>
-                    <TextField  className="contact_form_textfield projectFormField" id="projectDescription" type="text" defaultValue={props.card.desc ? props.card.desc : " "}  multiline rowsMax="4" disabled={props.isNotEditable_project}/>
+                    <TextField  name="desc" className="contact_form_textfield projectFormField" id="projectDescription" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.desc ? project.desc : " "}  multiline rowsMax="4" disabled={props.isNotEditable_project}/>
                     { 
                         props.isNotEditable_project ?
                         <Create className="editIcon" onClick={() => props.handleEditProject()}/>
@@ -58,13 +104,41 @@ export default function Project(props) {
                     <div  htmlFor="contactLink" className="contact_form_label">Images</div>         
                 </div>
                 <div className="project_images_container">
-                    <div  htmlFor="contactLink" className="project_image"></div>  
-                    <div  htmlFor="contactLink" className="project_image"></div>  
+                    <div className="image_parent_container">
+                        {
+                            (currentImg != null) &&
+                                Object.keys(currentImg).map(key => {
+                                    return (
+                                        <div key={key} className="image_child_container">
+                                            <div className="project_image">
+                                                <img src={URL.createObjectURL(currentImg[key])} className="thumbnail_image" id="currentProjectImagePreview"/>
+                                                <Cancel className="cancelIcon" onClick={() => handleDeleteImage('new', null, key)}/>
+                                            </div>
+                                        </div>
+                                    ) 
+                                })
+                        }
+                        {
+                            (projectImages != null) &&
+                                Object.keys(projectImages).map(key => {
+                                    if(key != '_') 
+                                    return (
+                                        <div key={key} className="image_child_container">
+                                            <div className="project_image">
+                                                <img src={`https://ipfs.infura.io/ipfs/${projectImages[key]}`} className="thumbnail_image" id="projectImagePreview"/>
+                                                <Cancel className="cancelIcon" onClick={() => handleDeleteImage('old', props.card.Data.name, key)}/>
+                                            </div>
+                                        </div>
+                                    )
+                                }) 
+                        }
+                    </div> 
                     <input
                         accept="image/*"
                         type="file" 
                         id="add_project_image_btn"   
-                        onChange={props.addImages}
+                        onChange={evt => addImages(evt)}
+                        multiple
                     /> 
                     <label htmlFor="add_project_image_btn">
                         <IconButton color="primary" aria-label="upload picture" component="span">
@@ -74,16 +148,29 @@ export default function Project(props) {
                 </div>
             </div>
             <DialogActions id="project_page_footer_icons">
-                <Button
-                    autoFocus
-                    variant="contained"
-                    size="small"
-                    color="primary" 
-                    className="stepper_btn"   
-                    onClick={props.saveProject}
-                >
-                    Save
-                </Button>
+                {
+                    props.card.Data.name ==  '' ?
+                    <Button
+                        autoFocus
+                        variant="contained"
+                        size="small"
+                        color="primary" 
+                        className="stepper_btn"   
+                        onClick={() => props.saveProject('save', project, currentImg)}
+                    >
+                        Save
+                    </Button>
+                    :<Button
+                        autoFocus
+                        variant="contained"
+                        size="small"
+                        color="primary" 
+                        className="stepper_btn"   
+                        onClick={() => props.saveProject('update', project, currentImg)}
+                    >
+                        Update
+                    </Button>
+                }
                 <Button
                     autoFocus
                     size="small"
