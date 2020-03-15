@@ -3,7 +3,6 @@ import "../Style/HomePage.scss";
 import "../Style/Template.css";
 import { Grid, Fab } from '@material-ui/core';
 import ChevronLeftOutlinedIcon from '@material-ui/icons/ChevronLeftOutlined';
-import AddRoundedIcon from '@material-ui/icons/AddRounded';
 import AboutPage from './AboutPage';
 import PortfolioPage from './PortfolioPage';
 import AchievementPage from './AchievementPage';

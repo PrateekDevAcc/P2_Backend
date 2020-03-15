@@ -49,14 +49,11 @@ export default function Project(props) {
         delete newCurrentImages[imageNode]
         setProjectImages(newCurrentImages)
         props.handleDeleteProjectImages(projectName, imageNode)
-        // console.log('delete ho gaya hai', projectImages, imageNode)
         
     }else if(imageType == 'new'){
         let newCurrentImages = { ...currentImg }
         delete newCurrentImages[imageNode]
         setCurrentImg(newCurrentImages)
-        props.updateCurrentImages(currentImg)
-        // console.log('delete ho gaya hai', currentImg, imageNode)
     }
     
  }

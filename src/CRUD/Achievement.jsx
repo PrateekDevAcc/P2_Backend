@@ -34,15 +34,15 @@ class Achievements extends Component {
 
             let checkUniqueness = this.state.gun.get('Conquest').get('Skills Details').get(`skill_${skillName}`);
             
-           // if(checkUniqueness['_'].put == undefined){
+           if(checkUniqueness['_'].put == undefined){
 
                 //insert the Object containig the detailed of the project excluding the images.
                 this.state.gun.get('Conquest').get('Skills Details').get(`skill_${skillName}`).put( skillValue )
                 console.log("Record is inserted")
 
-           // }else{
-           //     console.log("This Skill is already been Inserted.");
-           // }
+           }else{
+               console.log("This Skill is already been Inserted.");
+           }
 
         }           
     }
@@ -128,6 +128,8 @@ class Achievements extends Component {
             console.log("This Certification is not available.");
         }
     }
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%% Things for Debugging %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     //******************** Functional Coding Area is Ended **********************************
 
@@ -147,9 +149,8 @@ class Achievements extends Component {
 
     //******************** Graphic Rendering Started ****************************************
     
-    render() { 
-        return ( 
-            <></>
+    // render() { 
+    //     return ( 
             // <div>
             //     <h2>This is Achievements</h2>
             //     <div>Skills Details</div>
@@ -172,8 +173,8 @@ class Achievements extends Component {
             //     <button onClick={this.deleteCert}>Delete Certificate</button>
             //     <button onClick={this.getCertRecord}>Show Strut</button>
             // </div>
-         );
-    }
+    //      );
+    // }
 
      //******************** Graphic Rendering Ends *******************************************
 

@@ -7,7 +7,7 @@ const personalRecord = new Collection();
 const contactRecord = new Collection();
 const socialRecord = new Collection();
 
-class ABOUT extends Component {
+class ABOUT extends Component{
 
     constructor(props){
         super(props)
@@ -18,13 +18,13 @@ class ABOUT extends Component {
         gun : this.props.gun,
         name : "Prateek Patel",
         dp : null,
-        designation : "",
-        about : "",
-        email : "",
-        mobile : "",
-        otherLink : "",
-        socialName : "",
-        socialLink : ""
+        // designation : "",
+        // about : "",
+        // email : "",
+        // mobile : "",
+        // otherLink : "",
+        // socialName : "",
+        // socialLink : ""
      }
 
      //********************* Functional Coding Area Starts ****************************
@@ -137,79 +137,80 @@ class ABOUT extends Component {
     //---------------------------- DELETE OPERATION -------------------------
 
     //delete the Social links from the DB
-    deleteSocial  = () => {
+    deleteSocial  = socialName => {
 
-        this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${this.state.socialName}`).put(null)
-        console.log(`${this.state.socialName} is deleted`)
+        this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${socialName}`).put(null)
+        console.log(`${socialName} is deleted`)
     
     }
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%% Things for Debugging %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     //******************** Functional Coding Area is Ended **********************************
 
     //******************** Event Handlers Started *******************************************
 
-    updateName = evt => this.setState({ name : evt.target.value })
+    // updateName = evt => this.setState({ name : evt.target.value })
 
-    updateDesignation = evt => this.setState({ designation : evt.target.value })
+    // updateDesignation = evt => this.setState({ designation : evt.target.value })
 
-    updateAbout = evt => this.setState({ about : evt.target.value })
+    // updateAbout = evt => this.setState({ about : evt.target.value })
 
-    getDP = evt => this.setState({ dp : evt.target.files[0] })
+    // getDP = evt => this.setState({ dp : evt.target.files[0] })
 
-    updateEmail = evt => this.setState({ email : evt.target.value })
+    // updateEmail = evt => this.setState({ email : evt.target.value })
     
-    updateMobile = evt => this.setState({ mobile : evt.target.value })
+    // updateMobile = evt => this.setState({ mobile : evt.target.value })
 
-    updateOtherLink = evt => this.setState({ otherLink : evt.target.value })
+    // updateOtherLink = evt => this.setState({ otherLink : evt.target.value })
 
-    updateSocailName = evt => this.setState({ socialName : evt.target.value })
+    // updateSocailName = evt => this.setState({ socialName : evt.target.value })
     
-    updateSocailLink = evt => this.setState({ socialLink : evt.target.value })
+    // updateSocailLink = evt => this.setState({ socialLink : evt.target.value })
 
     //******************** Event Handlers Ended *********************************************
 
     //******************** Graphic Rendering Started ****************************************
     
-    render() { 
-        return ( 
-            <div>
-                <h2>This is About</h2>
-                <div>Personal Details</div>
-                <br/>
-                <input type="text" onChange={evt => this.updateName(evt)} placeholder="Full Name" value={this.state.name} />
-                <input type="text" onChange={evt => this.updateDesignation(evt)} placeholder="Designation" />
-                <input type="text" onChange={evt => this.updateAbout(evt)} placeholder="About"/>
-                <input type="file" onChange={evt => this.getDP(evt)} />
-                <br/>
-                <button onClick={this.insertPersonalData}>Insert Data</button>
-                <button onClick={this.insertPersonalData}>Update Data</button>
-                <button onClick={this.getPersonalRecord}>Show Strut</button>
-                <br/>
-                <br/>
-                <div>Contact Details</div>
-                <br/>
-                Other Details
-                <br/>
-                <input type="text" onChange={evt => this.updateEmail(evt)} placeholder="Email ID" />
-                <input type="text" onChange={evt => this.updateMobile(evt)} placeholder="Mobile Number" />
-                <input type="text" onChange={evt => this.updateOtherLink(evt)} placeholder="Other Link"/>
-                <button onClick={() => this.insertContactData("other")}>Insert/Update Other Data</button>
-                <br/>
-                Social Links
-                <br/>
-                <input type="text" onChange={evt => this.updateSocailName(evt)} placeholder="Socail Platform Name"/>
-                <input type="text" onChange={evt => this.updateSocailLink(evt)} placeholder="URL"/>
-                <button onClick={() => this.insertContactData("social")}>Add Link</button>
-                <button onClick={this.deleteSocial}>Delete</button>
-                <br/>
-                <button onClick={this.getSocialRecord}>Show Strut</button>
-                <br/>
+    // render() { 
+    //     return ( 
+    //         <div>
+    //             <h2>This is About</h2>
+    //             <div>Personal Details</div>
+    //             <br/>
+    //             <input type="text" onChange={evt => this.updateName(evt)} placeholder="Full Name" value={this.state.name} />
+    //             <input type="text" onChange={evt => this.updateDesignation(evt)} placeholder="Designation" />
+    //             <input type="text" onChange={evt => this.updateAbout(evt)} placeholder="About"/>
+    //             <input type="file" onChange={evt => this.getDP(evt)} />
+    //             <br/>
+    //             <button onClick={this.insertPersonalData}>Insert Data</button>
+    //             <button onClick={this.insertPersonalData}>Update Data</button>
+    //             <button onClick={this.getPersonalRecord}>Show Strut</button>
+    //             <br/>
+    //             <br/>
+    //             <div>Contact Details</div>
+    //             <br/>
+    //             Other Details
+    //             <br/>
+    //             <input type="text" onChange={evt => this.updateEmail(evt)} placeholder="Email ID" />
+    //             <input type="text" onChange={evt => this.updateMobile(evt)} placeholder="Mobile Number" />
+    //             <input type="text" onChange={evt => this.updateOtherLink(evt)} placeholder="Other Link"/>
+    //             <button onClick={() => this.insertContactData("other")}>Insert/Update Other Data</button>
+    //             <br/>
+    //             Social Links
+    //             <br/>
+    //             <input type="text" onChange={evt => this.updateSocailName(evt)} placeholder="Socail Platform Name"/>
+    //             <input type="text" onChange={evt => this.updateSocailLink(evt)} placeholder="URL"/>
+    //             <button onClick={() => this.insertContactData("social")}>Add Link</button>
+    //             <button onClick={this.deleteSocial}>Delete</button>
+    //             <br/>
+    //             <button onClick={this.getSocialRecord}>Show Strut</button>
+    //             <br/>
 
-            </div>
-         );
-    }
+    //         </div>
+    //      );
+    // }
 
-     //******************** Event Handlers Started *******************************************
 }
  
 export default ABOUT;

@@ -13,11 +13,15 @@ class Login extends Component {
      login = () => {
          let { username, password, user } = this.state
 
-         user.auth(username, password, (res) => {
-             if(!res.err){
-                console.log("You are successfully Logined", res)
-                this.props.updateSignIn(true) 
-             } 
+         user.auth(username, password, function(at){
+             if(!at.err){
+                console.log("You are successfully Logined", at)
+                this.props.updateSignIn(true, at.gun) 
+             }else if(at.err){
+                console.log(at)
+                alert(at.err)
+             }
+             
          })         
      }
 
@@ -26,12 +30,29 @@ class Login extends Component {
         this.state.user.is ? console.log(this.state.user.is) : console.log("You are not Login")
      }
 
+     logoutUser = () => {
+         this.state.user.leave()
+         console.log("USer is loged out")
+     }
+
+     deleteUser = () => {
+         let {username, password, user} = this.state
+         user.delete(username, password, (res) => {
+             console.log(res)
+         })
+     }
+
      //function for the SigningUp the new User
      signUp = () => {
         let { username, password, user } = this.state
 
-        user.create(username, password, (res) => {
-            if(!res.err) console.log(`Account is Created`, res)
+        user.create(username, password, (ack) => {
+            if(!ack.err){
+                console.log(`Account is Created`, ack)
+                alert("Thank You for Register")
+            }else{
+                console.log(ack)
+            }
         })
         
      }
@@ -72,44 +93,47 @@ class Login extends Component {
                             id="login_form"
                         >
                             <TextField
-                                item
+                                item="true"
                                 sm={12}
                                 label="Username"
                                 className="outlined-size-small spacer"
                                 variant="outlined"
-                                onChange={evt => this.updateUsername(evt)}
+                                onChange={this.updateUsername}
                             />
                             <TextField
-                                item
+                                item="true"
                                 sm={12}
                                 type="password"
                                 label="Password"
                                 className="outlined-size-small spacer"
                                 variant="outlined"
-                                onChange={evt => this.updatePassword(evt)}
+                                onChange={this.updatePassword}
                             />
                             <Button
-                                item
+                                item="true"
                                 sm={12}
                                 variant="contained"
                                 color="primary"
                                 className="spacer"
                                 id="login_btn"
-                                onClick={this.login}
+                                onClick={() => this.login()}
                             >
                                 Login
                             </Button>
                             <Button
-                                item
+                                item="true"
                                 sm={12}
                                 variant="contained"
                                 color="primary"
                                 className="spacer"
                                 id="login_btn"
-                                onClick={this.signUp}
+                                onClick={() => this.signUp()}
                             >
                                 SignUp
                             </Button>
+                            <button onClick={this.sessionChecker}>Session Check</button>
+                            <button onClick={this.logoutUser}>Logout</button>
+                            <button onClick={this.deleteUser}>Delete User</button>
                         </Grid>
                     </Grid>
                     <Grid item sm={4} >
