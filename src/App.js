@@ -14,7 +14,7 @@ class App extends Component {
 
   constructor(){
     super();
-      this.gun=Gun("http://localhost:3000/gun");
+      this.gun=Gun("http://localhost:9004/gun");
       window.gun = this.gun; //To have access to gun object in browser console
   }
 
