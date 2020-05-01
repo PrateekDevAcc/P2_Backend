@@ -16,12 +16,12 @@
     "react-scripts": "3.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "run-p dev server",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "node server.js",
-    "dev": "run-p server start"
+    "dev" : "react-scripts start"
   },
   "eslintConfig": {
     "extends": "react-app"

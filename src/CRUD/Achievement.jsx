@@ -28,7 +28,7 @@ class Achievements extends Component {
          //code for inserting social contact details
          if(skillValue === "" || skillName === ""){
             //check for the empty skill name, skill value field
-            console.log("Please enter All the Values")
+            alert("Please enter All the Values")
 
         }else{
 
@@ -41,7 +41,7 @@ class Achievements extends Component {
                 console.log("Record is inserted")
 
            }else{
-               console.log("This Skill is already been Inserted.");
+               alert("This Skill is already been Inserted.");
            }
 
         }           
@@ -52,7 +52,7 @@ class Achievements extends Component {
 
             if(certName === "" || certData.description === "" || certData.image === null){
                 //check for the empty short name, description, image field
-                console.log("Please enter All the Values")
+                alert("Please enter All the Values")
     
             }else{
 
@@ -62,7 +62,7 @@ class Achievements extends Component {
 
                     readers(certData.image)
                     .then(res => {
-                        console.log(res) 
+                        //console.log(res) 
                         certData.image = res
                         //insert the Object containig the detailed of the Certificates including with images.
                         this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${certName}`).put( certData )
@@ -70,7 +70,7 @@ class Achievements extends Component {
                     })
                 
                 }else{
-                    console.log("This Certification is already been Inserted.");
+                    alert("This Certification is already been Inserted.");
                 }
                 
             }                    
@@ -112,7 +112,7 @@ class Achievements extends Component {
             this.state.gun.get('Conquest').get('Skills Details').get(`skill_${skillName}`).put(null)
             console.log(`${skillName} is deleted`)
         }else{
-            console.log("This Skill is not available.");
+            alert("This Skill is not available.");
         }
     }
 
@@ -125,7 +125,7 @@ class Achievements extends Component {
             this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${certName}`).put( null )
             console.log(`${certName} is deleted`)   
         }else{
-            console.log("This Certification is not available.");
+            alert("This Certification is not available.");
         }
     }
 

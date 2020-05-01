@@ -16,6 +16,7 @@ class App extends Component {
     super();
       this.gun=Gun("http://localhost:9004/gun");
       window.gun = this.gun; //To have access to gun object in browser console
+      
   }
 
   //function for Logout
@@ -32,7 +33,7 @@ class App extends Component {
   } 
 
   render() { 
-
+    
     return ( 
       <div className="App">
         {

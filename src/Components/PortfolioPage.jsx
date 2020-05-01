@@ -54,8 +54,8 @@ class PortfolioPage extends Component {
      handleDeleteProjectImages = (projectName, imageNode) => this.portfolioObj.deleteImg(projectName, imageNode)   
 
      saveProject = (operation, newProjectData, newProjectImages) => {
-        console.log(newProjectData)
-        console.log(newProjectImages)
+        //console.log(newProjectData)
+        //console.log(newProjectImages)
         if(operation == 'save'){
             this.portfolioObj.insertProject(newProjectData, newProjectImages)
         }else if(operation == 'update'){

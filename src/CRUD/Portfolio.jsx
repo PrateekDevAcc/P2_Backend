@@ -38,7 +38,7 @@ class Portfolio extends Component {
           
             if(found === true){
         
-                console.log("Project name is already stored.")
+                alert("Project name is already stored.")
         
             }else{
 
@@ -54,7 +54,7 @@ class Portfolio extends Component {
 
                     //insert the Object containig the detailed of the project excluding the images.
                     this.state.gun.get('Projects').get(projectData.name).get("Data").put( obj )
-                    console.log("Record Inserted", obj) 
+                    //console.log("Record Inserted", obj) 
 
                 }
                 
@@ -63,7 +63,7 @@ class Portfolio extends Component {
         }else{
 
             //check for the empty name
-            console.log("Please Enter Name & Select Any Image")
+            alert("Please Enter Name & Select Any Image")
                 
         }
         
@@ -80,7 +80,7 @@ class Portfolio extends Component {
             for(let i=0 ; i<images.length ; i++ ){
                 readers(images[i])
                 .then(res => {
-                    console.log(res)  
+                    //console.log(res)  
                     this.state.gun.get('Projects').get(projectName).get("Images").get(`Image${i}`).put( res )
 
                 })
@@ -90,7 +90,7 @@ class Portfolio extends Component {
 
         }else{  
 
-            console.log("Please select any image.")
+            alert("Please select any image.")
             return false
         }
             
@@ -131,7 +131,7 @@ class Portfolio extends Component {
     viewData = () => {
 
         if(this.state.name === ""){
-            console.log("No Record Found")
+            alert("No Record Found")
         }else{
 
             //fetching the Data Node
@@ -172,7 +172,7 @@ class Portfolio extends Component {
             }   
 
         })
-        console.log(projectRecord.collection)
+        //console.log(projectRecord.collection)
         return projectRecord.collection;
     }
 
@@ -182,11 +182,11 @@ class Portfolio extends Component {
     updateImg = () => {
 
         if(this.state.imgNode === ""){
-            console.log("please enter the Image directory")
+            alert("please enter the Image directory")
         }else{
             readers(this.state.newImg)
             .then(res => {
-                console.log(res)
+                //console.log(res)
                 this.state.gun.get('Projects').get(this.state.name).get("Images").get(this.state.imgNode).put( res )
             })
         }     
@@ -204,7 +204,7 @@ class Portfolio extends Component {
                     
                     readers(projectImages[j])
                     .then(res => {
-                        console.log(res)  
+                        //console.log(res)  
                         this.state.gun.get('Projects').get(projectName).get("Images").get(`Image${i}`).put( res )
     
                     })
@@ -213,7 +213,7 @@ class Portfolio extends Component {
             });
 
             
-        }else console.log("Please select any Image to add.")
+        }else alert("Please select any Image to add.")
     }
 
     //-------------------------- DELETE Functionality ----------------------

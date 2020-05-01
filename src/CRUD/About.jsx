@@ -36,7 +36,7 @@ class ABOUT extends Component{
 
         if(this.state.name === "" || personalData.designation === "" || personalData.about === ""){
             //check for the empty name, designation, about field
-            console.log("Please enter All the Values")
+            alert("Please enter All the Values")
 
         }else{
                 
@@ -52,9 +52,10 @@ class ABOUT extends Component{
 
             if(personalData.DP) this.uploadDP(personalData.DP)
             
-            console.log("Record Inserted", obj) 
+            //console.log("Record Inserted", obj) 
+            console.log("Record Inserted") 
                
-            }           
+        }           
     }
 
      //method for inserting/updating the Contact Details data into the DB
@@ -64,13 +65,14 @@ class ABOUT extends Component{
             //code for inserting Other Contact details
             if(data.email === "" || data.mobile === "" || data.otherLink === ""){
                 //check for the empty name, designation, about field
-                console.log("Please enter All the Values")
+                alert("Please enter All the Values")
     
             }else{
 
                 //insert the Object containig the detailed of the project excluding the images.
                 this.state.gun.get('Informations').get("Contact Details").get("Other Details").put( data )
-                console.log("Record is inserted", data)
+                //console.log("Record is inserted", data)
+                console.log("Record is inserted")
 
             }
         }
@@ -79,7 +81,7 @@ class ABOUT extends Component{
             //code for inserting social contact details
             if(data.socialLink === "" || data.socialName === ""){
                 //check for the empty socail platform name, social link field
-                console.log("Please enter All the Values")
+                alert("Please enter All the Values")
     
             }else{
 
@@ -96,7 +98,7 @@ class ABOUT extends Component{
         //insert the image into the object, Call PROMISE with iterating the IMAGES and create IMAGE HASHES Array
         readers(dp)
         .then(res => {
-            console.log(res)  
+            //console.log(res)  
             this.state.gun.get('Informations').get("Personal Details").get("DP").put( res ) 
         })
     }
@@ -129,7 +131,7 @@ class ABOUT extends Component{
                 socialRecord.add(newKey, data)
             }
         })
-        console.log(socialRecord.collection)
+        //console.log(socialRecord.collection)
         return socialRecord.collection;
     }
 
@@ -140,7 +142,7 @@ class ABOUT extends Component{
     deleteSocial  = socialName => {
 
         this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${socialName}`).put(null)
-        console.log(`${socialName} is deleted`)
+        //console.log(`${socialName} is deleted`)
     
     }
 

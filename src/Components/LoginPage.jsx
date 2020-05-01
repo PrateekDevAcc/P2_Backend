@@ -18,7 +18,7 @@ class Login extends Component {
                 console.log("You are successfully Logined", at)
                 this.props.updateSignIn(true, at.gun) 
              }else if(at.err){
-                console.log(at)
+                //console.log(at)
                 alert(at.err)
              }
              
@@ -32,7 +32,7 @@ class Login extends Component {
 
      logoutUser = () => {
          this.state.user.leave()
-         console.log("USer is loged out")
+         console.log("User is loged out")
      }
 
      deleteUser = () => {
@@ -120,7 +120,7 @@ class Login extends Component {
                             >
                                 Login
                             </Button>
-                            <Button
+                            {/* <Button
                                 item="true"
                                 sm={12}
                                 variant="contained"
@@ -130,22 +130,16 @@ class Login extends Component {
                                 onClick={() => this.signUp()}
                             >
                                 SignUp
-                            </Button>
-                            <button onClick={this.sessionChecker}>Session Check</button>
+                            </Button> */}
+                            {/* <button onClick={this.sessionChecker}>Session Check</button>
                             <button onClick={this.logoutUser}>Logout</button>
-                            <button onClick={this.deleteUser}>Delete User</button>
+                            <button onClick={this.deleteUser}>Delete User</button> */}
                         </Grid>
                     </Grid>
                     <Grid item sm={4} >
                         <div id="right_login_pattern" className="side_pattern"></div>
                     </Grid>
                 </Grid>
-                {/* <h2>Login Page</h2>
-                <input type="text" onChange={evt => this.updateUsername(evt)} placeholder="username" />
-                <input type="text" onChange={evt => this.updatePassword(evt)} />
-                <button onClick={this.login}>Login</button>
-                <button onClick={this.signUp}>SignUp</button>
-                <button onClick={this.sessionChecker}>Session Check</button> */}
             </>
          );
     }
