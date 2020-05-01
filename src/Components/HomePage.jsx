@@ -4,6 +4,11 @@ import '../Style/HomePage.scss'
 
 class Home extends Component {
     state = {  }
+    
+    UNSAFE_componentWillReceiveProps(){
+        window.location.reload();
+    }
+    
     render() { 
         let AboutPageName = "About",
             PortfolioPageName = "Portfolio",

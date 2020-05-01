@@ -12,9 +12,11 @@ class App extends Component {
     gun : null
   }
 
+  
+
   constructor(){
     super();
-      this.gun=Gun("http://localhost:9004/gun");
+      this.gun=Gun(window.location.origin+'/gun');
       window.gun = this.gun; //To have access to gun object in browser console
       
   }
