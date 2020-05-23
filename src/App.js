@@ -5,18 +5,18 @@ import Login from './Components/LoginPage';
 import Landing from './Components/LandingPage'
 require("gun/sea");
 
+
 class App extends Component {
   
-  state = {
+  state = { 
     isLogin : true,
     gun : null
   }
 
-  
-
   constructor(){
     super();
-      this.gun=Gun(window.location.origin+'/gun');
+    
+      this.gun=Gun('http://ec2-3-7-82-215.ap-south-1.compute.amazonaws.com:9004/gun');
       window.gun = this.gun; //To have access to gun object in browser console
       
   }

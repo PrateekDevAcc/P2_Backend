@@ -8,19 +8,20 @@
     "@material-ui/icons": "^4.9.1",
     "buffer": "^5.6.0",
     "gun": "^0.2019.1228",
+    "gun-server": "^1.0.0",
     "ipfs-api": "^26.1.2",
-    "node-sass": "^4.14.0",
+    "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-images-upload": "^1.2.8",
-    "react-scripts": "3.0.1"
+    "react-scripts": "^3.4.1"
   },
   "scripts": {
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "node server.js",
-    "start" : "react-scripts start"
+    "start": "react-scripts start"
   },
   "eslintConfig": {
     "extends": "react-app"
