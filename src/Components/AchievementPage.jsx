@@ -101,15 +101,13 @@ class AchievementPage extends Component {
     } 
 
     saveAchievement = () => {
-        if(window.confirm("You Want to Save Certificate?")){
-            let certObj = {
-                name : this.state.selectedCertificate.name,
-                description : this.state.selectedCertificate.desc,
-                image : this.state.selectedCertificate.img
-            }
-            this.achObj.insertCertificatesData(this.state.selectedCertificate.name, certObj)
-            this.setState({  certRecord : this.achObj.getCertRecord() })
-        }    
+        let certObj = {
+            name : this.state.selectedCertificate.name,
+            description : this.state.selectedCertificate.desc,
+            image : this.state.selectedCertificate.img
+        }
+        this.achObj.insertCertificatesData(this.state.selectedCertificate.name, certObj)
+        this.setState({  certRecord : this.achObj.getCertRecord() })
     }
     
     render() { 

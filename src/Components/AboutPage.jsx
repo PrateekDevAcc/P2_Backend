@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import About from "../CRUD/About";
-import { Grid, Button, Input, TextField, Select, MenuItem, IconButton, Fab } from '@material-ui/core';
+import { Grid, Button, Input, TextField, Select, MenuItem, IconButton } from '@material-ui/core';
 import '../Style/AboutPage.css'
 import FilterTiltShift from '@material-ui/icons/FilterTiltShift'
 import Create from '@material-ui/icons/Create'
 import LockOpen from '@material-ui/icons/LockOpen'
 import AddAPhoto from '@material-ui/icons/AddAPhoto'
-import Delete from '@material-ui/icons/DeleteOutlined'
 
 
 class AboutPage extends Component {
@@ -46,7 +45,7 @@ class AboutPage extends Component {
 
     handleEdit = () => this.setState({ isNotEditable : !this.state.isNotEditable })
 
-    handleSocialProfileChange = evt => this.setState({ selectedProfile : evt.target.value, selectedProfileUrl : this.state.socialRecord[evt.target.value] })
+    handleSocialProfileChange = evt => this.setState({ selectedProfile : evt.target.value })
 
     handleDesignationInput = evt => {
         let tempObj = this.state.personalRecord
@@ -93,13 +92,12 @@ class AboutPage extends Component {
     }
     
     saveChanges = () => {
-        if(window.confirm("Do You sure for Saving !")){
-            if(typeof this.state.personalRecord.DP != 'string') 
+        alert("Do You sure for Saving !")
+        if(typeof this.state.personalRecord.DP != 'string') 
             this.aboutObj.insertPersonalData(this.state.personalRecord)
             
-            this.aboutObj.insertContactData('contact', this.state.contactRecord)
-            this.setState({ activeStep : 0 }) 
-        }         
+        this.aboutObj.insertContactData('contact', this.state.contactRecord)
+        this.setState({ activeStep : 0 })     
     }
 
     addSocialProfile = () => {
@@ -112,12 +110,6 @@ class AboutPage extends Component {
             socialLink : this.state.selectedProfileUrl
         }
         this.aboutObj.insertContactData('social', socialData )
-        this.setState({ socialRecord : this.aboutObj.getSocialRecord() })
-    }
-
-    deleteSocialProfile = () => {
-
-        this.aboutObj.deleteSocial(this.state.selectedProfile)
         this.setState({ socialRecord : this.aboutObj.getSocialRecord() })
     }
     
@@ -219,8 +211,8 @@ class AboutPage extends Component {
                                     </Select>
                                 </Grid>
                                 <Grid item container sm={12} direction="row" justify="center" alignItems="center" className="form_element_row">
-                                    <TextField item="true" sm={6} className="contact_form_label" id="social_name" type="text"  onChange={this.handleSocialNameText} value={this.state.selectedProfile ? this.state.selectedProfile : ''} />
-                                    <TextField item="true" sm={6} className="contact_form_textfield" id="social_url" type="text" onChange={this.handleSocialUrlText} value={this.state.selectedProfileUrl ? this.state.selectedProfileUrl : ''} />
+                                    <TextField item="true" sm={6} className="contact_form_label" id="social_name" type="text" onChange={this.handleSocialNameText} value={this.state.selectedProfile} />
+                                    <TextField item="true" sm={6} className="contact_form_textfield" id="social_url" type="text" onChange={this.handleSocialUrlText} value={this.state.socialRecord[this.state.selectedProfile]} />
                                 </Grid>
                                 <Grid item container sm={12} direction="row" justify="center" alignItems="center" className="form_element_row">
                                     <Button
@@ -234,16 +226,6 @@ class AboutPage extends Component {
                                     >
                                         +
                                     </Button>
-                                    <Fab 
-                                        color="primary" 
-                                        aria-label="add" 
-                                        id="delete_card_btn" 
-                                        onClick={this.deleteSocialProfile}
-                                        size="small"
-                                        className="header_sticky"
-                                    >
-                                        <Delete />
-                                    </Fab>
                                 </Grid>
                             </Grid>
                             <Grid item sm={6} container direction="row" justify="flex-start" alignItems="flex-start" className="contact2_container">

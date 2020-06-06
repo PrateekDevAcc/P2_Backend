@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { Grid, Button, CardContent } from '@material-ui/core';
+import { Grid, Button, Card, CardContent } from '@material-ui/core';
 import '../Style/HomePage.scss'
+import PORTFOLIO from '../CRUD/Portfolio'
+import ACH from '../CRUD/Achievement'
+import ABOUT from '../CRUD/About'
 
 class Home extends Component {
     state = {  }
@@ -84,6 +87,7 @@ class Home extends Component {
                         </div>
                     </Grid>
                 </Grid>
+                <ACH gun={this.props.gun} logOut={this.props.logOut} />
             </>
             // <>
             //     <h1>Home Page</h1>

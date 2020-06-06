@@ -26,12 +26,11 @@ class App extends Component {
     this.gun.user().leave()
     this.updateSignIn(false)
     console.log("User LogOut")
-    alert("You are Logging Out")
   }
 
   //function for  update the Login Status
-  updateSignIn = (val, userGun) => {
-     this.setState({ isLogin : val, gun : userGun })
+  updateSignIn = (val) => {
+     this.setState({ isLogin : val })
   } 
 
   render() { 

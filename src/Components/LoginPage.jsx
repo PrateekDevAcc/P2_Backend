@@ -46,13 +46,8 @@ class Login extends Component {
      signUp = () => {
         let { username, password, user } = this.state
 
-        user.create(username, password, (ack) => {
-            if(!ack.err){
-                console.log(`Account is Created`, ack)
-                alert("Thank You for Register")
-            }else{
-                console.log(ack)
-            }
+        user.create(username, password, (res) => {
+            if(!res.err) console.log(`Account is Created`, res)
         })
         
      }
@@ -93,30 +88,30 @@ class Login extends Component {
                             id="login_form"
                         >
                             <TextField
-                                item="true"
+                                item
                                 sm={12}
                                 label="Username"
                                 className="outlined-size-small spacer"
                                 variant="outlined"
-                                onChange={this.updateUsername}
+                                onChange={evt => this.updateUsername(evt)}
                             />
                             <TextField
-                                item="true"
+                                item
                                 sm={12}
                                 type="password"
                                 label="Password"
                                 className="outlined-size-small spacer"
                                 variant="outlined"
-                                onChange={this.updatePassword}
+                                onChange={evt => this.updatePassword(evt)}
                             />
                             <Button
-                                item="true"
+                                item
                                 sm={12}
                                 variant="contained"
                                 color="primary"
                                 className="spacer"
                                 id="login_btn"
-                                onClick={() => this.login()}
+                                onClick={this.login}
                             >
                                 Login
                             </Button>
@@ -127,7 +122,7 @@ class Login extends Component {
                                 color="primary"
                                 className="spacer"
                                 id="login_btn"
-                                onClick={() => this.signUp()}
+                                onClick={this.signUp}
                             >
                                 SignUp
                             </Button> */}
