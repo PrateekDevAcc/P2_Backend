@@ -139,7 +139,7 @@ class ABOUT extends Component {
     //---------------------------- DELETE OPERATION -------------------------
 
     //delete the Social links from the DB
-    deleteSocial  = () => {
+    deleteSocial  = (socialName) => {
 
         this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${socialName}`).put(null)
         //console.log(`${socialName} is deleted`)
