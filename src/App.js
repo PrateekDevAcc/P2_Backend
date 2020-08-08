@@ -1,24 +1,43 @@
 import React, { Component } from 'react';
-import Gun from "gun"
 import './App.css';
 import Login from './Components/LoginPage';
 import Landing from './Components/LandingPage'
-require("gun/sea");
+import firebase from './utility/firebase'
 
 
 class App extends Component {
   
-  state = { 
-    isLogin : true,
+  
+
+  constructor(props){
+    super(props);     
+    this.state = { 
+      user : null 
+    } 
   }
 
-  constructor(){
-    super();      
+  componentDidMount(){
+    this.authListner()
+  }
+
+  authListner = () => {
+    firebase.auth().onAuthStateChanged(user => {
+      if(user){
+        this.setState({user})
+      }else{
+        this.setState({user : null})
+      }
+    })
   }
 
   //function for Logout
   logOut = () => {
-    this.updateSignIn(false)
+    firebase.auth().signOut().then(user => {
+      console.log("User logged out successfully")
+    }).catch(err => {
+      console.error("Auth "+err)
+    })
+    this.updateSignIn(null)
     console.log("User LogOut")
   }
 
@@ -28,7 +47,6 @@ class App extends Component {
   } 
 
   render() { 
-    
     return ( 
       <div className="App">
         {

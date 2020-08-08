@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {Grid, TextField, Button} from '@material-ui/core';
+import firebase from '../utility/firebase'
+import {Grid, TextField, Button, Link} from '@material-ui/core';
 import '../Style/loginPage.css'
 
 class Login extends Component {
@@ -10,46 +11,39 @@ class Login extends Component {
 
      //function for Login the user inside the application
      login = () => {
-         let { username, password, user } = this.state
+         let { username, password } = this.state
 
-         user.auth(username, password, function(at){
-             if(!at.err){
-                console.log("You are successfully Logined", at)
-             }else if(at.err){
-                //console.log(at)
-                alert(at.err)
-             }
-             
-         })         
-     }
-
-     //function for checking the User login session in the application
-     sessionChecker = () => {
-        this.state.user.is ? console.log(this.state.user.is) : console.log("You are not Login")
-     }
-
-     logoutUser = () => {
-         this.state.user.leave()
-         console.log("User is loged out")
-     }
-
-     deleteUser = () => {
-         let {username, password, user} = this.state
-         user.delete(username, password, (res) => {
-             console.log(res)
-         })
+         firebase.auth().signInWithEmailAndPassword(username, password).then(user => {
+            this.props.updateSignIn(user)
+            console.log(user)
+            console.log(user+" is successfully loggined")
+         }).catch(err => {
+             console.error("Auth "+ err)
+         })    
      }
 
      //function for the SigningUp the new User
      signUp = () => {
-        let { username, password, user } = this.state
+        let { username, password } = this.state
 
-        user.create(username, password, (res) => {
-            if(!res.err) console.log(`Account is Created`, res)
+        firebase.auth().createUserWithEmailAndPassword(username, password).then(user => {
+            this.props.updateSignIn(user)
+            console.log(user + " is successfully SigUp");
+        }).catch(err => {
+            console.error("Auth "+ err)
         })
         
      }
 
+     resetPassword = () => {
+        let { username, password } = this.state
+
+         firebase.auth().sendPasswordResetEmail(username).then(user => {
+            alert("Password Reset link is sended to the email "+username);
+        }).catch(err => {
+            console.error("Auth "+ err)
+        })
+     }
 
      //Event Handler
     updateUsername = evt => this.setState({ username : evt.target.value })
@@ -86,7 +80,7 @@ class Login extends Component {
                             id="login_form"
                         >
                             <TextField
-                                item
+                                item="true"
                                 sm={12}
                                 label="Username"
                                 className="outlined-size-small spacer"
@@ -94,7 +88,7 @@ class Login extends Component {
                                 onChange={evt => this.updateUsername(evt)}
                             />
                             <TextField
-                                item
+                                item="true"
                                 sm={12}
                                 type="password"
                                 label="Password"
@@ -103,7 +97,7 @@ class Login extends Component {
                                 onChange={evt => this.updatePassword(evt)}
                             />
                             <Button
-                                item
+                                item="true"
                                 sm={12}
                                 variant="contained"
                                 color="primary"
@@ -113,6 +107,9 @@ class Login extends Component {
                             >
                                 Login
                             </Button>
+                            <Link href="#" onClick={this.resetPassword}>
+                                Reset Password
+                            </Link>
                             {/* <Button
                                 item="true"
                                 sm={12}

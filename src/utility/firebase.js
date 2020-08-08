@@ -9,9 +9,10 @@ var config = {
     messagingSenderId: "1049661622279",
     appId: "1:1049661622279:web:d368155c39a5a955c282a2",
     measurementId: "G-790MZ808EC"
-};
+  };
 
 firebase.initializeApp(config);
+
 firebase.analytics();
  
 export default firebase;
