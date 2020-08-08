@@ -1,30 +1,13 @@
 import React, { Component } from 'react';
-import { readers } from '../ipfsStore'
-import Collection from '../Collection';
-import Util from '../Util';
+import { readers } from '../utility/ipfsStore'
+import firebase from '../utility/firebase'
 
-const personalRecord = new Collection();
-const contactRecord = new Collection();
-const socialRecord = new Collection();
+const firestore = firebase.firestore();
 
 class ABOUT extends Component {
 
-    constructor(props){
-        super(props)
-        this.Util = new Util();
-    }
-
     state = { 
-        gun : this.props.gun,
-        name : "Prateek Patel",
-        dp : null,
-        designation : "",
-        about : "",
-        email : "",
-        mobile : "",
-        otherLink : "",
-        socialName : "",
-        socialLink : ""
+        name : "Prateek Patel"
      }
 
      //********************* Functional Coding Area Starts ****************************
@@ -32,7 +15,7 @@ class ABOUT extends Component {
     //---------------------------- CREATE & UPDATE OPERATION -----------------------
 
      //method for inserting/updating the Personal Details data into the DB
-     insertPersonalData = personalData => {
+    insertPersonalData = personalData => {
 
         if(this.state.name === "" || personalData.designation === "" || personalData.about === ""){
             //check for the empty name, designation, about field
@@ -46,11 +29,14 @@ class ABOUT extends Component {
                 designation : personalData.designation,
                 about       : personalData.about
             }
-
             //insert the Object containig the detailed of the project excluding the images.
-            this.state.gun.get('Informations').get("Personal Details").put( obj )
-
-            if(personalData.DP) this.uploadDP(personalData.DP)
+            firestore
+                .collection('Informations')
+                .doc('Personal Details')
+                .update(obj).then(() => console.log('Personal Details are updated.'))
+            
+            if(typeof personalData.image != 'string') 
+                this.uploadDP(personalData.image)
             
             //console.log("Record Inserted", obj) 
             console.log("Record Inserted") 
@@ -63,21 +49,24 @@ class ABOUT extends Component {
 
         if(option === "contact"){
             //code for inserting Other Contact details
-            if(data.email === "" || data.mobile === "" || data.otherLink === ""){
+            if(data.email === "" || data.mobile === "" || data.website === ""){
                 //check for the empty name, designation, about field
                 alert("Please enter All the Values")
     
             }else{
 
                 //insert the Object containig the detailed of the project excluding the images.
-                this.state.gun.get('Informations').get("Contact Details").get("Other Details").put( data )
-                //console.log("Record is inserted", data)
-                console.log("Record is inserted")
+                firestore
+                    .collection('Informations')
+                    .doc('Contact Details')
+                    .update(data).then(() => console.log('Contact Details are updated.'))
 
             }
         }
           
         if(option === "social"){
+
+            
             //code for inserting social contact details
             if(data.socialLink === "" || data.socialName === ""){
                 //check for the empty socail platform name, social link field
@@ -86,8 +75,12 @@ class ABOUT extends Component {
             }else{
 
                 //insert the Object containig the detailed of the project excluding the images.
-                this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${data.socialName}`).put( data.socialLink )
-                console.log("Record is inserted")
+                firestore
+                    .collection('Informations')
+                    .doc('Social Details')
+                    .set({
+                        [data.socialName] : data.socialLink
+                     },{ merge : true }).then(() => console.log('Social Details are updated.'))
 
             }
         }
@@ -99,41 +92,52 @@ class ABOUT extends Component {
         readers(dp)
         .then(res => {
             //console.log(res)  
-            this.state.gun.get('Informations').get("Personal Details").get("DP").put( res ) 
+            firestore
+                .collection('Informations')
+                .doc('Personal Details')
+                .update({
+                    image : res
+                }).then(() => console.log('Personal Detail Image is updated.'))
         })
     }
 
 
     //---------------------------- READ OPERATION -----------------------
 
-    getPersonalRecord = () => {
-        this.state.gun.get('Informations').get("Personal Details").map((data, key)=>{
-            if(data != null){
-                personalRecord.add(key, data)
-            }
-        })
-        return personalRecord.collection;
-    }
+    getPersonalRecord = new Promise( resolve => {
 
-    getContactRecord = () => {
-        this.state.gun.get('Informations').get("Contact Details").get("Other Details").map((data, key)=>{
-            if(data != null){
-                contactRecord.add(key, data)
-            }
-        })
-        return contactRecord.collection;
-    }
+        firestore
+            .collection('Informations')
+            .doc('Personal Details')
+            .onSnapshot(snap => {   
+                let personalRecord = snap.data()
+                //console.log(personalRecord)
+                resolve(personalRecord)
+            })
+        
+    });
 
-    getSocialRecord = () => {
-        this.state.gun.get('Informations').get("Contact Details").get("Social Details").map((data, key)=>{
-            if(data != null){
-                let newKey = this.Util.splitNode(key)
-                socialRecord.add(newKey, data)
-            }
-        })
-        //console.log(socialRecord.collection)
-        return socialRecord.collection;
-    }
+    getContactRecord = new Promise( resolve => {
+
+        firestore
+            .collection('Informations')
+            .doc('Contact Details')
+            .onSnapshot(snap => {   
+                resolve(snap.data())
+            })
+
+    });
+
+    getSocialRecord = new Promise( resolve => {
+
+        firestore
+            .collection('Informations')
+            .doc('Social Details')
+            .onSnapshot(snap => {   
+                resolve(snap.data())
+            })
+
+    })
 
 
     //---------------------------- DELETE OPERATION -------------------------
@@ -141,9 +145,15 @@ class ABOUT extends Component {
     //delete the Social links from the DB
     deleteSocial  = (socialName) => {
 
-        this.state.gun.get('Informations').get('Contact Details').get("Social Details").get(`social_${socialName}`).put(null)
-        //console.log(`${socialName} is deleted`)
+        let field = {
+            [socialName] : firebase.firestore.FieldValue.delete()
+        }
     
+        firestore
+            .collection('Informations')
+            .doc('Social Details')
+            .update(field).then(() => console.log("social link is deleted"))
+
     }
     
     //******************** Functional Coding Area is Ended **********************************
@@ -175,7 +185,7 @@ class ABOUT extends Component {
     render() { 
         return ( 
             <div>
-                <h2>This is About</h2>
+                {/* <h2>This is About</h2>
                 <div>Personal Details</div>
                 <br/>
                 <input type="text" onChange={evt => this.updateName(evt)} placeholder="Full Name" value={this.state.name} />
@@ -186,7 +196,7 @@ class ABOUT extends Component {
                 <button onClick={this.insertPersonalData}>Insert Data</button>
                 <button onClick={this.insertPersonalData}>Update Data</button>
                 <button onClick={this.getPersonalRecord}>Show Strut</button>
-                <br/>
+                <br/>   
                 <br/>
                 <div>Contact Details</div>
                 <br/>
@@ -205,7 +215,7 @@ class ABOUT extends Component {
                 <button onClick={this.deleteSocial}>Delete</button>
                 <br/>
                 <button onClick={this.getSocialRecord}>Show Strut</button>
-                <br/>
+                <br/> */}
 
             </div>
          );

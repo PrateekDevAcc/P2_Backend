@@ -15,24 +15,24 @@ export default function Project(props) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const [project, setProject] = useState(props.card.Data)
-  const [currentImg, setCurrentImg] = useState()
-  const [projectImages, setProjectImages] = useState(props.card.Images)
+  const [project, setProject] = useState(props.card.data)
+  const [currentImg, setCurrentImg] = useState([])
+  const [projectImages, setProjectImages] = useState(props.card.data.images)
 
   const handleProjectUpdate = evt => {
      
     let tempProject = {
         name : project.name,
         link : project.link, 
-        desc : project.desc
+        description : project.description
     }
 
     if(evt.target.name == 'name'){
         tempProject.name = evt.target.value
     }else if(evt.target.name == 'link'){
         tempProject.link = evt.target.value
-    }else if(evt.target.name == 'desc'){
-        tempProject.desc = evt.target.value
+    }else if(evt.target.name == 'description'){
+        tempProject.description = evt.target.value
     }
       
     setProject(tempProject)
@@ -47,9 +47,11 @@ export default function Project(props) {
     if(imageType == 'old'){
         let newCurrentImages = { ...projectImages }
         delete newCurrentImages[imageNode]
+
         setProjectImages(newCurrentImages)
-        props.handleDeleteProjectImages(projectName, imageNode)
-        // console.log('delete ho gaya hai', projectImages, imageNode)
+        
+        // props.handleDeleteProjectImages(projectName, imageNode, newCurrentImages)
+        // console.log('delete ho gaya hai', newCurrentImages, imageNode)
         
     }else if(imageType == 'new'){
         let newCurrentImages = { ...currentImg }
@@ -70,49 +72,35 @@ export default function Project(props) {
             aria-labelledby="responsive-dialog-Project-Page"
             id="project_dialog"
         >
-            <DialogTitle id="responsive-dialog-Project-Page">{props.card.Data.name ? props.card.Data.name : "New Project"}</DialogTitle>
+            <DialogTitle id="responsive-dialog-Project-Page">{project.name ? project.name : "New Project"}</DialogTitle>
             <div className="custom_dashed"></div>
             <div className="project_inner_container">
                 <div className="projectFormRow" id="project_name_row">
-                    <div  htmlFor="" className="contact_form_label">Project Name</div>
-                    <TextField  name="name" className="contact_form_textfield projectFormField" id="projectName" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.name ? project.name : " "} disabled={props.isNotEditable_project}/>
-                    { 
-                        props.isNotEditable_project ?
-                        <Create className="editIcon" onClick={() => props.handleEditProject()}/>
-                        : <LockOpen className="editIcon" onClick={() => props.handleEditProject()} />
-                    }
+                    <div  htmlFor="projectName" className="contact_form_label">Project Name</div>
+                    <TextField  name="name" className="contact_form_textfield projectFormField" id="projectName" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.name ? project.name : ""}/>
                 </div>
                 <div className="projectFormRow">
-                    <div  htmlFor="" className="contact_form_label">Access Link</div>
-                    <TextField  name="link" className="contact_form_textfield projectFormField" id="projectAccessLink" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.link ? project.link : " "} disabled={props.isNotEditable_project}/>
-                    { 
-                        props.isNotEditable_project ?
-                        <Create className="editIcon" onClick={() => props.handleEditProject()}/>
-                        : <LockOpen className="editIcon" onClick={() => props.handleEditProject()} />
-                    }
+                    <div  htmlFor="projectAccessLink" className="contact_form_label">Access Link</div>
+                    <TextField  name="link" className="contact_form_textfield projectFormField" id="projectAccessLink" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.link ? project.link : ""}/>
                 </div>
                 <div className="projectFormRow" id="projectFormRow_description">
-                    <div  htmlFor="contactLink" className="contact_form_label" id="projectFormRow_description_label">Description</div>
-                    <TextField  name="desc" className="contact_form_textfield projectFormField" id="projectDescription" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.desc ? project.desc : " "}  multiline rowsMax="4" disabled={props.isNotEditable_project}/>
-                    { 
-                        props.isNotEditable_project ?
-                        <Create className="editIcon" onClick={() => props.handleEditProject()}/>
-                        : <LockOpen className="editIcon" onClick={() => props.handleEditProject()} />
-                    }
+                    <div  htmlFor="projectDescription" className="contact_form_label" id="projectFormRow_description_label">Description</div>
+                    <TextField  name="description" className="contact_form_textfield projectFormField" id="projectDescription" type="text" onChange={evt => handleProjectUpdate(evt)} value={project.description ? project.description : ""}  multiline rowsMax="4"/>
                 </div>
                 <div className="projectFormRow project_image_label_container ">
-                    <div  htmlFor="contactLink" className="contact_form_label">Images</div>         
+                    <div  htmlFor=" " className="contact_form_label">Images</div>         
                 </div>
                 <div className="project_images_container">
                     <div className="image_parent_container">
-                        {
+                        {   
                             (currentImg != null) &&
-                                Object.keys(currentImg).map(key => {
+                                Object.keys(currentImg).map(image => {
+                                    
                                     return (
-                                        <div key={key} className="image_child_container">
+                                        <div key={image} className="image_child_container">
                                             <div className="project_image">
-                                                <img src={URL.createObjectURL(currentImg[key])} className="thumbnail_image" id="currentProjectImagePreview"/>
-                                                <Cancel className="cancelIcon" onClick={() => handleDeleteImage('new', null, key)}/>
+                                                <img src={URL.createObjectURL(currentImg[image])} className="thumbnail_image" id="currentProjectImagePreview"/>
+                                                <Cancel className="cancelIcon" onClick={() => handleDeleteImage('new', null, currentImg[image])}/>
                                             </div>
                                         </div>
                                     ) 
@@ -120,13 +108,12 @@ export default function Project(props) {
                         }
                         {
                             (projectImages != null) &&
-                                Object.keys(projectImages).map(key => {
-                                    if(key != '_') 
+                                Object.keys(projectImages).map(image => {
                                     return (
-                                        <div key={key} className="image_child_container">
+                                        <div key={image} className="image_child_container">
                                             <div className="project_image">
-                                                <img src={`https://ipfs.infura.io/ipfs/${projectImages[key]}`} className="thumbnail_image" id="projectImagePreview"/>
-                                                <Cancel className="cancelIcon" onClick={() => handleDeleteImage('old', props.card.Data.name, key)}/>
+                                                <img src={`https://ipfs.infura.io/ipfs/${projectImages[image]}`} className="thumbnail_image" id="projectImagePreview"/>
+                                                <Cancel className="cancelIcon" onClick={() => handleDeleteImage('old', project.name, image)}/>
                                             </div>
                                         </div>
                                     )
@@ -149,7 +136,7 @@ export default function Project(props) {
             </div>
             <DialogActions id="project_page_footer_icons">
                 {
-                    props.card.Data.name ==  '' ?
+                    props.card.data.name ==  '' ?
                     <Button
                         autoFocus
                         variant="contained"
@@ -166,7 +153,7 @@ export default function Project(props) {
                         size="small"
                         color="primary" 
                         className="stepper_btn"   
-                        onClick={() => props.saveProject('update', project, currentImg)}
+                        onClick={() => props.saveProject('update', project, projectImages, currentImg)}
                     >
                         Update
                     </Button>

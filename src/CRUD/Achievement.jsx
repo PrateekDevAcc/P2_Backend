@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { readers } from '../ipfsStore';
-import Collection from '../Collection';
-import Util from '../Util';
+import { readers } from '../utility/ipfsStore';
+import Util from '../utility/Util';
+import firebase from '../utility/firebase'
 
-const skillRecord = new Collection();
-const certRecord = new Collection();
-
+const firestore = firebase.firestore();
 
 class Achievements extends Component {
 
@@ -14,9 +12,6 @@ class Achievements extends Component {
         this.Util = new Util();
     }
 
-    state = { 
-        gun : this.props.gun
-     }
 
      //********************* Functional Coding Area Starts ****************************
 
@@ -32,13 +27,17 @@ class Achievements extends Component {
 
         }else{
 
-            let checkUniqueness = this.state.gun.get('Conquest').get('Skills Details').get(`skill_${skillName}`);
+            // let checkUniqueness = this.state.gun.get('Conquest').get('Skills Details').get(`skill_${skillName}`);
             
            // if(checkUniqueness['_'].put == undefined){
 
-                //insert the Object containig the detailed of the project excluding the images.
-                this.state.gun.get('Conquest').get('Skills Details').get(`skill_${skillName}`).put( skillValue )
-                console.log("Record is inserted")
+                //insert the Object containig the detailed of the project excluding the images.  
+                firestore
+                    .collection('Conquest')
+                    .doc('Skills')
+                    .update({
+                        [skillName] : skillValue
+                    }).then(() => console.log('Skills are updated.'))
 
            // }else{
            //     console.log("This Skill is already been Inserted.");
@@ -56,22 +55,38 @@ class Achievements extends Component {
     
             }else{
 
-                let checkUniqueness = this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${certName}`);
-            
-                if(checkUniqueness['_'].put == undefined){
+                if(typeof certData.image == 'string'){
+
+                    //insert the Object containig the detailed of the Certificates including with images.
+                    firestore
+                    .collection('Conquest')
+                    .doc('Certificates')
+                    .update({
+                        [certData.name] : certData
+                    }).then(() => console.log('Certificate Details are updated.'))
+
+                }else if(typeof certData.image == 'object'){
 
                     readers(certData.image)
                     .then(res => {
                         //console.log(res) 
                         certData.image = res
                         //insert the Object containig the detailed of the Certificates including with images.
-                        this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${certName}`).put( certData )
-                        console.log("Record is inserted")   
+                        firestore
+                            .collection('Conquest')
+                            .doc('Certificates')
+                            .update({
+                                [certData.name] : certData
+                            }).then(() => console.log('Certificate Details are updated.'))
+                        // this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${certName}`).put( certData )
+                     
                     })
+                }  
+                    
                 
-                }else{
-                    alert("This Certification is already been Inserted.");
-                }
+                // }else{
+                //     alert("This Certification is already been Inserted.");
+                // }
                 
             }                    
     }
@@ -79,54 +94,58 @@ class Achievements extends Component {
 
     //---------------------------- READ OPERATION -----------------------
 
-    getSkillsRecord = () => {
+    getSkillsRecord = new Promise( resolve => {
 
-        this.state.gun.get('Conquest').get('Skills Details').map((data, key)=>{
-            if(data != null){
-                let newKey = this.Util.splitNode(key)
-                skillRecord.add(newKey, data)
-            }
-        })
-        return skillRecord.collection;
-    }
+        firestore
+            .collection('Conquest')
+            .doc('Skills')
+            .onSnapshot(snap => {   
+                let skillsRecord = snap.data()
+                //console.log(personalRecord)
+                resolve(skillsRecord)
+            })
 
-    getCertRecord = () => {
+    })
 
-        this.state.gun.get('Conquest').get("Certificate Details").map((data, key)=>{
-            if(data != null){
-                let newKey = this.Util.splitNode(key)
-                certRecord.add(newKey, data)
-            }   
-        })
-        return certRecord.collection;
-    }
+    getCertRecord = new Promise( resolve => {
+
+        firestore
+            .collection('Conquest')
+            .doc('Certificates')
+            .onSnapshot(snap => {   
+                let certificatesRecord = snap.data()
+                //console.log(personalRecord)
+                resolve(certificatesRecord)
+            })
+    })
 
     //---------------------------- DELETE OPERATION -------------------------
 
     //delete the Skills from the DB
     deleteSkill  = skillName => {
 
-        let checkUniqueness = this.state.gun.get('Conquest').get('Skills Details').get(`skill_${skillName}`);
-            
-        if(checkUniqueness['_'].put != undefined){
-            this.state.gun.get('Conquest').get('Skills Details').get(`skill_${skillName}`).put(null)
-            console.log(`${skillName} is deleted`)
-        }else{
-            alert("This Skill is not available.");
+        let field = {
+            [skillName] : firebase.firestore.FieldValue.delete()
         }
+    
+        firestore
+            .collection('Conquest')
+            .doc('Skills')
+            .update(field).then(() => console.log("skills is deleted"))
     }
 
     //delete the Certificate details from the DB
     deleteCert = certName => {
 
-        let checkUniqueness = this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${certName}`);
-            
-        if(checkUniqueness['_'].put != undefined){
-            this.state.gun.get('Conquest').get('Certificate Details').get(`cert_${certName}`).put( null )
-            console.log(`${certName} is deleted`)   
-        }else{
-            alert("This Certification is not available.");
+        let field = {
+            [certName] : firebase.firestore.FieldValue.delete()
         }
+    
+        firestore
+            .collection('Conquest')
+            .doc('Certificates')
+            .update(field).then(() => console.log("Certifcate is deleted"))
+
     }
     
     //******************** Functional Coding Area is Ended **********************************

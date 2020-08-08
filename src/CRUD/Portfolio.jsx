@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { readers } from '../ipfsStore'
-import Collection from '../Collection';
-import Util from '../Util';
+import { readers } from '../utility/ipfsStore'
+import Collection from '../utility/Collection';
+import Util from '../utility/Util';
+import firebase from '../utility/firebase'
 
-const projectRecord = new Collection();
-const projectData = new Collection();
-const projectImages = new Collection();
+const firestore = firebase.firestore();
+
+// const projectRecord = new Collection();
+// const projectData = new Collection();
+// const projectImages = new Collection();
 
 class Portfolio extends Component {
 
@@ -15,12 +18,15 @@ class Portfolio extends Component {
     }
 
     state = { 
-        gun : this.props.gun,
         name : "",
         imgNode : "",
         desc : "",
         link : "",
         images : null
+     }
+
+     UNSAFE_componentWillMount(){
+
      }
 
      //********************* Functional Coding Area Starts ****************************
@@ -32,39 +38,54 @@ class Portfolio extends Component {
 
         if(projectData.name != "" && imagesData != null){
             
-            //check for the already stored Name 
-            let projectRecord = this.getPortfolioRecord()
-            let found = projectRecord.hasOwnProperty(projectData.name)
-          
-            if(found === true){
-        
-                alert("Project name is already stored.")
-        
-            }else{
+            
 
-                //lets insert the Detials
-                let obj = {
-                    name       : projectData.name,
-                    desc       : projectData.desc,
-                    link       : projectData.link,
-                    no_of_imgs : imagesData.length
-                }    
+            this.getPortfolioRecord.then(previousProjects => {     
 
-                if(this.insertImg(imagesData, projectData.name)){
+                //check for the already stored Name 
+                //fetching the PortfolioRecord
+                let found = false
 
-                    //insert the Object containig the detailed of the project excluding the images.
-                    this.state.gun.get('Projects').get(projectData.name).get("Data").put( obj )
-                    //console.log("Record Inserted", obj) 
+                previousProjects.map(project => {
+                    if(projectData.name == project.data.name) found = true
+                })
 
+                if(found === true){
+                    alert("Project name is already stored.")
+                }else{
+
+                    //lets insert the Detials
+                    let obj = {
+                        name       : projectData.name.trim(),
+                        description: projectData.description.trim(),
+                        link       : projectData.link.trim(),
+                        images     : []
+                    }    
+
+                    if(imagesData.length > 0){
+
+                        //insert the Object containig the detailed of the project excluding the images.
+                        firestore
+                            .collection('Projects')
+                            .add(obj)
+                            .then((docRef) => {
+                                this.insertImg(imagesData, docRef.id, 'insert').then(resolve => {
+                                    console.log('Images are added')
+                                })
+                                console.log("Project is Added")
+                            })
+
+                    }
+                    
                 }
-                
-            }
+            },error => {
+                console.log(error)
+            });
+
             
         }else{
-
             //check for the empty name
             alert("Please Enter Name & Select Any Image")
-                
         }
         
     }
@@ -73,37 +94,58 @@ class Portfolio extends Component {
     //-------------------------- Images CREATE OPERATION ----------------------
 
     //upload method, Call PROMISE with iterating the IMAGES and create IMAGE HASHES Array
-    insertImg = (images, projectName) => {
+    insertImg = (images, projectID, operation) => {
 
-        if(images){
+        return new Promise( resolve => {
+            if(images){
+                let imgs = [];
+                for(let i=0 ; i<images.length ; i++ ){
+                    readers(images[i])
+                    .then(res => {
+                        imgs.push(res)
+                        if(operation == 'insert'){
+    
+                            firestore
+                                .collection('Projects')
+                                .doc(projectID)
+                                .update({
+                                    images : imgs
+                                })
+                                .then(() => {
+                                    console.log("Images are added to the Project")
+                                })
+    
+                        }
 
-            for(let i=0 ; i<images.length ; i++ ){
-                readers(images[i])
-                .then(res => {
-                    //console.log(res)  
-                    this.state.gun.get('Projects').get(projectName).get("Images").get(`Image${i}`).put( res )
-
-                })
+                        if(images.length == imgs.length){
+                            resolve(imgs)
+                        }
+                        
+                    })
+                }
+    
+                
+                     
+            }else{  
+                alert("Please select any image.")
             }
-
-            return true
-
-        }else{  
-
-            alert("Please select any image.")
-            return false
-        }
+        })
+        
             
     }
 
     //---------------------------- UPDATE OPERATION -----------------------
 
      //method for updating the project data into the DB
-     updateProject = projectData => {
-
+     updateProject = ( projectData, projectID ) => {
         if(projectData.name != ''){
-            this.state.gun.get('Projects').get(projectData.name).get("Data").put( projectData )
-            console.log("Record Updated", projectData) 
+            firestore
+                .collection('Projects')
+                .doc(projectID)
+                .update(projectData)
+                .then(() => {
+                    console.log("Project is Updated")
+                })
         }
      }
 
@@ -111,123 +153,138 @@ class Portfolio extends Component {
     //---------------------------- READ OPERATION -----------------------
 
     //Iterating the Structure of the Project Root Node 
-    iterateRecords = () => {
+    // iterateRecords = () => {
 
-        //itreating in the sub-directory of Master directory (Projects->this.state.name) to fetch the Data
-        if(this.state.name === ""){
-            // console.log("chal raha hai")
-            this.state.gun.get('Projects').map((data, key)=>{
-                console.log(data, key)
-            })
-        }else{
-            this.state.gun.get('Projects').get(this.state.name).map((data, key)=>{
-                console.log(data, key)
-            })
-        }
+    //     //itreating in the sub-directory of Master directory (Projects->this.state.name) to fetch the Data
+    //     if(this.state.name === ""){
+    //         // console.log("chal raha hai")
+    //         this.state.gun.get('Projects').map((data, key)=>{
+    //             console.log(data, key)
+    //         })
+    //     }else{
+    //         this.state.gun.get('Projects').get(this.state.name).map((data, key)=>{
+    //             console.log(data, key)
+    //         })
+    //     }
         
-    }
+    // }
 
     //displaying single conplete record
-    viewData = () => {
+    // viewData = () => {
 
-        if(this.state.name === ""){
-            alert("No Record Found")
-        }else{
+    //     if(this.state.name === ""){
+    //         alert("No Record Found")
+    //     }else{
 
-            //fetching the Data Node
-            this.state.gun.get('Projects').get(this.state.name).get("Data").once((data, key)=>{
-                console.log(key, data)
-            });
+    //         //fetching the Data Node
+    //         this.state.gun.get('Projects').get(this.state.name).get("Data").once((data, key)=>{
+    //             console.log(key, data)
+    //         });
 
-            //fetching the Images Node
-            this.state.gun.get('Projects').get(this.state.name).get("Images").once((data, key)=>{
-                console.log(key, data)
-            });
-        }
-    }
+    //         //fetching the Images Node
+    //         this.state.gun.get('Projects').get(this.state.name).get("Images").once((data, key)=>{
+    //             console.log(key, data)
+    //         });
+    //     }
+    // }
 
-    getPortfolioRecord = () => {
+    getPortfolioRecord = new Promise( resolve => {
         
+        let projects = [];
+        firestore
+            .collection('Projects')
+            .get()
+            .then(snap => {
+                snap.forEach(project => {
+                    projects.push({ id : project.id, data : project.data()})
+                });
+            })
 
-        this.state.gun.get('Projects').map((data,project) => {
-
-            if(data != null){
-                projectData.collection = {}
-                this.state.gun.get('Projects').get(project).map((data1, key1) => {
-                    if(key1 == 'Images'){
-                        projectImages.collection = {}
-                        Object.keys(data1).map(image =>{
-                            if(image != '_')
-                            if(data1[image] != null){
-                                projectImages.add(image, data1[image])
-                            }
-                        })
-                        projectData.add(key1, projectImages.collection)
-                    }else{
-                        projectData.add(key1, data1)
-                    }
-                    
-                })
-                projectRecord.add(project,projectData.collection)
-            }   
-
-        })
-        //console.log(projectRecord.collection)
-        return projectRecord.collection;
-    }
+        resolve(projects)
+    })
 
     //-------------------------- Images Functionality ----------------------
 
    //method for updating the images of the project.
-    updateImg = () => {
+    // updateImg = () => {
 
-        if(this.state.imgNode === ""){
-            alert("please enter the Image directory")
-        }else{
-            readers(this.state.newImg)
-            .then(res => {
-                //console.log(res)
-                this.state.gun.get('Projects').get(this.state.name).get("Images").get(this.state.imgNode).put( res )
-            })
-        }     
+    //     if(this.state.imgNode === ""){
+    //         alert("please enter the Image directory")
+    //     }else{
+    //         readers(this.state.newImg)
+    //         .then(res => {
+    //             //console.log(res)
+    //             this.state.gun.get('Projects').get(this.state.name).get("Images").get(this.state.imgNode).put( res )
+    //         })
+    //     }     
 
-    }
+    // }
 
-    addImages = (projectImages, projectName) => {
-
-        if(projectImages && projectName != ''){
-           
-            this.state.gun.get('Projects').get(projectName).get("Images").once((data, key)=>{       
-                let arr = Object.entries(data).slice(1)
-                // console.log("chal raha hai", arr.length, projectImages.length)
-                for(let i= arr.length, j=0; i<projectImages.length + arr.length ; i++, j++ ){
-                    
-                    readers(projectImages[j])
-                    .then(res => {
-                        //console.log(res)  
-                        this.state.gun.get('Projects').get(projectName).get("Images").get(`Image${i}`).put( res )
-    
-                    })
-                }
-    
-            });
-
-            
-        }else alert("Please select any Image to add.")
-    }
 
     //-------------------------- DELETE Functionality ----------------------
 
     //method for deleteing the Image from the Project
-    deleteImg = (projectName, imageNode) => {
-        this.state.gun.get('Projects').get(projectName).get("Images").get(imageNode).put(null)
-        console.log(`${imageNode} is deleted from ${projectName}`)
+    deleteImg = (projectID, imageNode, imageArr) => {
+      
+
+        this.getPortfolioRecord.then(previousProjects => {
+
+            let finalImages = []
+
+            previousProjects.map(project => {
+                if(projectID == project.id){
+                    finalImages = project.data.images
+                    finalImages.splice(imageNode, 1)
+                }
+            })
+
+            //removing all the images from the project
+            firestore
+                .collection('Projects')
+                .doc(projectID)
+                .update({ images : firebase.firestore.FieldValue.delete() })
+                .then(() => {
+                    console.log("Images is removed from the Project")
+                })
+
+            // dding the new set of images to the project
+            firestore
+                .collection('Projects')
+                .doc(projectID)
+                .set({ images : finalImages },{ merge : true })
+                .then(() => {
+                    console.log("Images is removed from the Project")
+                })  
+        
+        },error => {
+            console.log(error)
+        });
+
+        // imageArr.splice(imageNode, 1)
+
+       
+        // firestore
+        //     .collection('Projects')
+        //     .doc(projectID)
+        //     .update({ images : imageArr })
+        //     .then(() => {
+        //         console.log("Images is removed from the Project")
+        //     })
+        // this.state.gun.get('Projects').get(projectName).get("Images").get(imageNode).put(null)
+        // console.log(`${imageNode} is deleted from ${projectName}`)
     }
 
     //method for deleteing the Project
-    deleteProject = projectName => {
-        this.state.gun.get('Projects').get(projectName).put(null)
-        console.log(`${projectName} project is deleted.`)
+    deleteProject = projectID => {
+        
+        firestore
+            .collection('Projects')
+            .doc(projectID)
+            .delete()
+            .then(() => {
+                console.log(`${projectID} project is deleted.`)
+            })
+
     }
 
 

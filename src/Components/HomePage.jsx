@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { Grid, Button, Card, CardContent } from '@material-ui/core';
-import '../Style/HomePage.scss'
+import '../Style/HomePage.css'
 import PORTFOLIO from '../CRUD/Portfolio'
 import ACH from '../CRUD/Achievement'
 import ABOUT from '../CRUD/About'
 
 class Home extends Component {
-    state = {  }
+    state = { }
     
-    UNSAFE_componentWillReceiveProps(){
-        window.location.reload();
-    }
+    // UNSAFE_componentWillReceiveProps(){
+    //     window.location.reload();
+    // }
+
     
     render() { 
         let AboutPageName = "About",
@@ -87,17 +88,7 @@ class Home extends Component {
                         </div>
                     </Grid>
                 </Grid>
-                <ACH gun={this.props.gun} logOut={this.props.logOut} />
             </>
-            // <>
-            //     <h1>Home Page</h1>
-            //     <button onClick={this.props.logOut}>Logout</button>
-            //     <PORTFOLIO gun={this.props.gun} logOut={this.props.logOut} />
-            //     <hr />
-            //     <ACH gun={this.props.gun} logOut={this.props.logOut} />
-            //     <hr />
-            //     <ABOUT gun={this.props.gun} logOut={this.props.logOut} />  
-            // </>
          );
     }
 }

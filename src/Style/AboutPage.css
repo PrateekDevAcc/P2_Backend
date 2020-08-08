@@ -204,6 +204,13 @@
     width: 10px !important;
     margin-top: 5px;
 }
+#delete_social_profile_btn{
+    width: 10px !important;
+    margin-top: 5px;
+    background-color: #FC6E6E;
+    border-radius: 20px;
+    margin-left: 15px;
+}
 
 #aboutImagePreview{
     border-radius: 50%;

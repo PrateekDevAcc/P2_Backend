@@ -5,8 +5,7 @@ import '../Style/loginPage.css'
 class Login extends Component {
     state = { 
         username : "",
-        password : "",
-        user : this.props.gun.user()
+        password : ""
      }
 
      //function for Login the user inside the application
@@ -16,7 +15,6 @@ class Login extends Component {
          user.auth(username, password, function(at){
              if(!at.err){
                 console.log("You are successfully Logined", at)
-                this.props.updateSignIn(true, at.gun) 
              }else if(at.err){
                 //console.log(at)
                 alert(at.err)

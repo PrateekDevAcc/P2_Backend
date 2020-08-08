@@ -10,20 +10,14 @@ class App extends Component {
   
   state = { 
     isLogin : true,
-    gun : null
   }
 
   constructor(){
-    super();
-    
-      this.gun=Gun('http://ec2-3-7-82-215.ap-south-1.compute.amazonaws.com:9004/gun');
-      window.gun = this.gun; //To have access to gun object in browser console
-      
+    super();      
   }
 
   //function for Logout
   logOut = () => {
-    this.gun.user().leave()
     this.updateSignIn(false)
     console.log("User LogOut")
   }
@@ -39,8 +33,8 @@ class App extends Component {
       <div className="App">
         {
           !this.state.isLogin ?
-            <Login gun={this.gun} updateSignIn={this.updateSignIn}/>
-          : <Landing gun={this.gun} logOut={this.logOut} />
+            <Login updateSignIn={this.updateSignIn}/>
+          : <Landing logOut={this.logOut} />
         }
       </div>
      );

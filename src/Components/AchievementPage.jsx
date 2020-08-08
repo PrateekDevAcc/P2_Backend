@@ -13,35 +13,27 @@ class AchievementPage extends Component {
     
     constructor(props){
         super(props)
-        this.achObj = new Achievements(this.props);
-        this.skillRecord = this.achObj.getSkillsRecord();
-        this.certRecord = this.achObj.getCertRecord();    
+        this.achObj = new Achievements(this.props);  
     }
     
     state = { 
         selectedSkill : "",
         selectedRating : "",
-        selectedCertificate : { name : '', desc : '', img : null},
+        selectedCertificate : { name : '', description : '', image : null},
         ratingArr : [1,2,3,4,5,6,7,8,9,10],
         isNotEditable : true,
-        skillRecord : '',
-        certRecord  : ''       
-    }
-
-    UNSAFE_componentWillMount(){
-        this.setState({ 
-            skillRecord : this.skillRecord,
-            certRecord : this.certRecord
-        }) 
+        skillRecord : this.props.AchievementsData.skills,
+        certRecord  : this.props.AchievementsData.cert      
     }
     
     handleSkillChange = evt => this.setState({ selectedSkill : evt.target.value, selectedRating : this.state.skillRecord[evt.target.value] })
     
     handleRatingChange = evt => this.setState({ selectedRating : evt.target.value })
     
-    handleCertificateChange = evt => { 
-        this.setState({ selectedCertificate : this.certRecord[evt.target.value] }); 
-        document.getElementById('certImagePreview').src = `https://ipfs.infura.io/ipfs/${this.certRecord[evt.target.value].image}` 
+    handleCertificateChange = evt => {
+        console.log(evt.target); 
+        this.setState({ selectedCertificate : this.state.certRecord[evt.target.value] }); 
+        document.getElementById('certImagePreview').src = `https://ipfs.infura.io/ipfs/${this.state.certRecord[evt.target.value].image}` 
     }
     
     handleEdit = () => this.setState({ isNotEditable : !this.state.isNotEditable })
@@ -56,25 +48,25 @@ class AchievementPage extends Component {
 
     handleCertDescText = evt =>{
         let tempObj = this.state.selectedCertificate
-        tempObj.desc = evt.target.value
+        tempObj.description = evt.target.value
         this.setState({ selectedCertificate : tempObj })
     }
 
     handleCertImage = evt => {
         let tempObj = this.state.selectedCertificate
-        tempObj.img = evt.target.files[0]
+        tempObj.image = evt.target.files[0]
         document.getElementById('certImagePreview').src = URL.createObjectURL(evt.target.files[0])
         this.setState({ selectedCertificate : tempObj })
     }
 
     handleSkillDelete = () => {
         this.achObj.deleteSkill(this.state.selectedSkill)
-        this.setState({ skillRecord : this.achObj.getSkillsRecord() })
+        this.setState({ skillRecord : this.props.AchievementsData.skills, selectedSkill : "", selectedRating : "" })
     }
 
     handleCertDelete = () => {
         this.achObj.deleteCert(this.state.selectedCertificate.name)
-        this.setState({ certRecord : this.achObj.getCertRecord() })
+        this.setState({ certRecord : this.props.AchievementsData.cert,  selectedCertificate : { name : '', description : '', image : null} })
     }
 
     populateSkills = () => {
@@ -97,17 +89,13 @@ class AchievementPage extends Component {
 
     addSkill = () => {
         this.achObj.insertSkillsData(this.state.selectedSkill, this.state.selectedRating)
-        this.setState({ skillRecord : this.achObj.getSkillsRecord() })
+        this.setState({ skillRecord : this.props.AchievementsData.skills })
     } 
 
     saveAchievement = () => {
-        let certObj = {
-            name : this.state.selectedCertificate.name,
-            description : this.state.selectedCertificate.desc,
-            image : this.state.selectedCertificate.img
-        }
-        this.achObj.insertCertificatesData(this.state.selectedCertificate.name, certObj)
-        this.setState({  certRecord : this.achObj.getCertRecord() })
+
+        this.achObj.insertCertificatesData(this.state.selectedCertificate.name, this.state.selectedCertificate)
+        this.setState({  certRecord : this.props.AchievementsData.cert })
     }
     
     render() { 

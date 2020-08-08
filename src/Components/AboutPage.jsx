@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import About from "../CRUD/About";
 import { Grid, Button, Input, TextField, Select, MenuItem, IconButton } from '@material-ui/core';
 import '../Style/AboutPage.css'
@@ -7,15 +7,11 @@ import Create from '@material-ui/icons/Create'
 import LockOpen from '@material-ui/icons/LockOpen'
 import AddAPhoto from '@material-ui/icons/AddAPhoto'
 
-
 class AboutPage extends Component {
 
     constructor(props){
         super(props)
-        this.aboutObj = new About(this.props);
-        this.personalRecord = this.aboutObj.getPersonalRecord();
-        this.contactRecord = this.aboutObj.getContactRecord();    
-        this.socialRecord = this.aboutObj.getSocialRecord();    
+        this.aboutObj = new About(this.props);    
     }
 
     state = { 
@@ -23,20 +19,10 @@ class AboutPage extends Component {
         isNotEditable : true,
         selectedProfile : '',
         selectedProfileUrl : '',
-        personalRecord : '',
-        contactRecord : '',
-        socialRecord : '',
-        imagePerview : ''
-    }
-
-    UNSAFE_componentWillMount(){
-        this.setState({ 
-            personalRecord : this.aboutObj.getPersonalRecord(),
-            contactRecord : this.aboutObj.getContactRecord(),
-            socialRecord : this.aboutObj.getSocialRecord(),
-            imagePerview : `https://ipfs.infura.io/ipfs/${this.personalRecord.DP}`
-        }) 
-        console.log('ComponentWillMount is running')
+        personalRecord : this.props.AboutData.personal,
+        contactRecord : this.props.AboutData.contact,
+        socialRecord : this.props.AboutData.social,
+        imagePerview : `https://ipfs.infura.io/ipfs/${this.props.AboutData.personal.image}`
     }
 
     handleBack = () => this.setState({ activeStep : this.state.activeStep - 1 }) 
@@ -72,8 +58,9 @@ class AboutPage extends Component {
     }
 
     handleOtherLinkText = evt => {
+        
         let tempObj = this.state.contactRecord
-        tempObj.otherLink = evt.target.value
+        tempObj.website = evt.target.value
         this.setState({ contactRecord : tempObj })
     }
 
@@ -87,15 +74,13 @@ class AboutPage extends Component {
 
     handleAboutImage = evt => {
         let tempObj = this.state.personalRecord
-        tempObj.DP = evt.target.files[0]
+        tempObj.image = evt.target.files[0]
         this.setState({ imagePerview : URL.createObjectURL(evt.target.files[0]), personalRecord : tempObj })
     }
     
     saveChanges = () => {
         alert("Do You sure for Saving !")
-        if(typeof this.state.personalRecord.DP != 'string') 
-            this.aboutObj.insertPersonalData(this.state.personalRecord)
-            
+        this.aboutObj.insertPersonalData(this.state.personalRecord)
         this.aboutObj.insertContactData('contact', this.state.contactRecord)
         this.setState({ activeStep : 0 })     
     }
@@ -110,7 +95,11 @@ class AboutPage extends Component {
             socialLink : this.state.selectedProfileUrl
         }
         this.aboutObj.insertContactData('social', socialData )
-        this.setState({ socialRecord : this.aboutObj.getSocialRecord() })
+        this.setState({ socialRecord : this.state.socialRecord })
+    }
+
+    deleteSocialProfile = () => {
+        this.aboutObj.deleteSocial(this.state.selectedProfile)
     }
     
     populateSocialProfiles = () => {
@@ -120,6 +109,7 @@ class AboutPage extends Component {
     }
 
     render() { 
+        console.log(this.props.AboutData)
         return ( 
             <>
                 {/* Header */}
@@ -225,6 +215,17 @@ class AboutPage extends Component {
                                         onClick={this.addSocialProfile}
                                     >
                                         +
+                                    </Button> 
+                                    <Button
+                                        item="true" 
+                                        sm={12}
+                                        variant="contained"
+                                        size="small"
+                                        color="secondary" 
+                                        id="delete_social_profile_btn"   
+                                        onClick={this.deleteSocialProfile}
+                                    >
+                                        -
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -248,8 +249,8 @@ class AboutPage extends Component {
                                         }
                                 </Grid>
                                 <Grid item container sm={12} direction="row" justify="center" alignItems="center" className="form_element_row">
-                                        <div item="true" sm={6} htmlFor="contactLink" className="contact_form_label">Contact Link</div>
-                                        <TextField item="true" sm={6} className="contact_form_textfield" id="contactLink" type="text" onChange={this.handleOtherLinkText} defaultValue={this.state.contactRecord.otherLink} disabled={this.state.isNotEditable}/>
+                                        <div item="true" sm={6} htmlFor="contactLink" className="contact_form_label">Website Link</div>
+                                        <TextField item="true" sm={6} className="contact_form_textfield" id="contactLink" type="text" onChange={this.handleOtherLinkText} defaultValue={this.state.contactRecord.website} disabled={this.state.isNotEditable}/>
                                         { 
                                             this.state.isNotEditable ?
                                             <Create className="editIcon" onClick={this.handleEdit}/>

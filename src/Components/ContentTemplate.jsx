@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "../Style/HomePage.scss";
+import "../Style/HomePage.css";
 import "../Style/Template.css";
 import { Grid, Fab } from '@material-ui/core';
 import ChevronLeftOutlinedIcon from '@material-ui/icons/ChevronLeftOutlined';
@@ -8,6 +8,8 @@ import AboutPage from './AboutPage';
 import PortfolioPage from './PortfolioPage';
 import AchievementPage from './AchievementPage';
 
+
+
 class Template extends Component {
  
     state = {
@@ -15,6 +17,7 @@ class Template extends Component {
         projectFromFlag : false,
         obj : new PortfolioPage()
     }
+   
 
     foo = () => {
         const obj = new PortfolioPage();
@@ -66,13 +69,13 @@ class Template extends Component {
                     {(() => {
                         switch(this.props.landingState.chosen){
                             case 1 : 
-                                return <AboutPage gun={this.props.gun} changePageName={this.changePageName}/>;
+                                return <AboutPage AboutData={this.props.AboutData} changePageName={this.changePageName}/>;
                                 break;
                             case 2 : 
-                                return <PortfolioPage gun={this.props.gun} changePageName={this.changePageName}/>;
+                                return <PortfolioPage PortfolioData={this.props.PortfolioData} changePageName={this.changePageName}/>;
                                 break;
                             case 3 :
-                                return <AchievementPage gun={this.props.gun} changePageName={this.changePageName}/>;
+                                return <AchievementPage AchievementsData={this.props.AchievementsData} changePageName={this.changePageName}/>;
                                 break;
                             default :
                                 return <div>default</div>;
